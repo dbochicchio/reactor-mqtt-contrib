@@ -1,9 +1,27 @@
+# mqtt_devices.yaml
+#
+# Copyright (C) 2022 Daniele Bochicchio, All Rights Reserved
+# For updates see https://github.com/dbochicchio/reactor-mqtt-contrib
+#
+# *** IMPORTANT ***
+# You can import into your own templates by pasting into a "templates" section 
+# to a file named local_mqtt_devices.yaml in your config directory.
+---
+version: 22323
+revision: 1
+format: 1
+
 templates:
   # Shelly HEM
   shelly_hem:
     type: ValueSensor
     capabilities: ['power_sensor', 'energy_sensor', 'voltage_sensor', 'current_sensor', 'power_factor_sensor', 'x_energy_sensor_exported']
     primary_attribute: power_sensor.value
+    requires: [topic, channel]
+    lwt: "shellies/%channel%/online"
+    description: Shelly HEM
+    contributor_name: Daniele Bochicchio
+    contributor_url: https://github.com/dbochicchio/reactor-mqtt-contrib
     events:
       "shellies/%topic%/emeter/%channel%/power":
         "power_sensor.value":
@@ -38,6 +56,11 @@ templates:
     type: BinarySensor
     capabilities: ['binary_sensor']
     primary_attribute: binary_sensor.state
+    requires: [topic, channel]
+    lwt: "shellies/%channel%/online"
+    description: Shelly with detached inputs, mapped as binary sensor
+    contributor_name: Daniele Bochicchio
+    contributor_url: https://github.com/dbochicchio/reactor-mqtt-contrib
     events:
       "shellies/%topic%/input/%channel%":
         "binary_sensor.state":
@@ -48,6 +71,11 @@ templates:
     type: ValueSensor
     capabilities: ['temperature_sensor']
     primary_attribute: temperature_sensor.value
+    requires: [topic, channel]
+    lwt: "shellies/%channel%/online"
+    description: Shelly with external temperature sensors
+    contributor_name: Daniele Bochicchio
+    contributor_url: https://github.com/dbochicchio/reactor-mqtt-contrib
     events:
       "shellies/%topic%/ext_temperature/%channel%":
         "temperature_sensor.value":
@@ -59,6 +87,11 @@ templates:
     type: ValueSensor
     capabilities: ['humidity_sensor']
     primary_attribute: humidity_sensor.value
+    requires: [topic, channel]
+    lwt: "shellies/%channel%/online"
+    description: Shelly with external humidity sensors
+    contributor_name: Daniele Bochicchio
+    contributor_url: https://github.com/dbochicchio/reactor-mqtt-contrib
     events:
       "shellies/%topic%/ext_humidity/%channel%":
         "humidity_sensor.value":
@@ -70,6 +103,11 @@ templates:
     type: Switch
     capabilities: ['power_switch', 'toggle', 'power_sensor', 'energy_sensor']
     primary_attribute: power_switch.state
+    requires: [topic, channel]
+    description: Shelly relay with power meter
+    contributor_name: Daniele Bochicchio
+    contributor_url: https://github.com/dbochicchio/reactor-mqtt-contrib
+    lwt: "shellies/%channel%/online"
     events:
       "shellies/%topic%/relay/%channel%":
         "power_switch.state":
@@ -102,6 +140,12 @@ templates:
     type: ValueSensor
     capabilities: [value_sensor]
     primary_attribute: value_sensor.value
+    requires: [topic, source]
+    lwt: "tele/%topic%/LWT"
+    query: "cmnd/%topic%/STATE"
+    description: Tasmota device with barometric pressure sensor
+    contributor_name: Daniele Bochicchio
+    contributor_url: https://github.com/dbochicchio/reactor-mqtt-contrib
     events:
       "tele/%topic%/SENSOR":
         "value_sensor.value":
@@ -111,19 +155,26 @@ templates:
         "value_sensor.units":
           json_payload: true
           if_expr: '! isnull( payload?.PressureUnit )'
-          expr: payload.TempUnit
+          expr: payload.PressureUnit
 
   # tasmota with illuminance
   tasmota_sensor_illuminance:
     type: ValueSensor
     capabilities: [light_sensor]
     primary_attribute: light_sensor.value
+    requires: [topic, source]
+    lwt: "tele/%topic%/LWT"
+    query: "cmnd/%topic%/STATE"
+    description: Tasmota device with illuminance sensor
+    contributor_name: Daniele Bochicchio
+    contributor_url: https://github.com/dbochicchio/reactor-mqtt-contrib
     events:
       "tele/%topic%/SENSOR":
         "light_sensor.value":
           json_payload: true
           if_expr: '! isnull( payload?[ source ?? "Global" ] )'
           expr: 'payload[ source ?? "Global" ]?.Illuminance'
+        "light_sensor.units": 'lux'
         "x_mqtt_tasmota_ir.value":
           json_payload: true
           if_expr: '! isnull( payload?[ source ?? "Global" ] )'
