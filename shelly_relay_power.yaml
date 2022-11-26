@@ -1,0 +1,55 @@
+# mqtt_devices.yaml
+#
+# Copyright (C) 2022 Daniele Bochicchio, All Rights Reserved
+# For updates see https://github.com/dbochicchio/reactor-mqtt-contrib
+#
+# *** IMPORTANT ***
+# You can import into your own templates by pasting into a "templates" section 
+# to a file named local_mqtt_devices.yaml in your config directory.
+---
+version: 22324
+revision: 2
+format: 1
+
+templates:
+  # Shelly relay with power meter
+  shelly_relay_power:
+    type: Switch
+    capabilities: ['power_switch', 'toggle', 'power_sensor', 'energy_sensor']
+    primary_attribute: power_switch.state
+    requires: [topic, channel]
+    description: Shelly relay with power meter
+    contributor_name: Daniele Bochicchio
+    contributor_url: https://github.com/dbochicchio/reactor-mqtt-contrib
+    lwt: "tele/%topic%/LWT"
+    init:
+      - topic: "shellies/%topic%/command"
+        payload: "update"
+        qos: 0
+        retain: false
+    events:
+      "shellies/%topic%/relay/%channel%":
+        "power_switch.state":
+          expr: 'payload == "on"'
+      "shellies/%topic%/relay/%channel%/power":
+        "power_sensor.value":
+          expr: 'float(payload)'
+        "power_sensor.units": "W"
+      "shellies/%topic%/relay/%channel%/energy":
+        "energy_sensor.value":
+          expr: 'round(float(payload) / 0.06, 4)' # value / 60 / 1000
+        "energy_sensor.units": "KWH"
+    actions:
+      power_switch:
+        "on":
+          topic: "shellies/%topic%/relay/%channel%/command"
+          payload: "on"
+        "off":
+          topic: "shellies/%topic%/relay/%channel%/command"
+          payload: "off"
+        set:
+          topic: "shellies/%topic%/relay/%channel%/command"
+          payload:
+            expr: "parameters.state ? 'on' : 'off'"
+            type: raw
+      # toggle.toggle is implemented by the default handler in MQTTController

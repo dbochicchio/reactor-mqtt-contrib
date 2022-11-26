@@ -1,0 +1,35 @@
+# mqtt_devices.yaml
+#
+# Copyright (C) 2022 Daniele Bochicchio, All Rights Reserved
+# For updates see https://github.com/dbochicchio/reactor-mqtt-contrib
+#
+# *** IMPORTANT ***
+# You can import into your own templates by pasting into a "templates" section 
+# to a file named local_mqtt_devices.yaml in your config directory.
+---
+version: 22323
+revision: 1
+format: 1
+
+templates:
+  # tasmota with pressure sensor
+  tasmota_sensor_pressure:
+    type: ValueSensor
+    capabilities: [value_sensor]
+    primary_attribute: value_sensor.value
+    requires: [topic, source]
+    lwt: "tele/%topic%/LWT"
+    query: "cmnd/%topic%/STATE"
+    description: Tasmota device with barometric pressure sensor
+    contributor_name: Daniele Bochicchio
+    contributor_url: https://github.com/dbochicchio/reactor-mqtt-contrib
+    events:
+      "tele/%topic%/SENSOR":
+        "value_sensor.value":
+          json_payload: true
+          if_expr: '! isnull( payload?[ source ?? "Global" ] )'
+          expr: 'payload[ source ?? "Global" ]?.Pressure'
+        "value_sensor.units":
+          json_payload: true
+          if_expr: '! isnull( payload?.PressureUnit )'
+          expr: payload.PressureUnit

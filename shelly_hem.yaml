@@ -1,0 +1,57 @@
+# mqtt_devices.yaml
+#
+# Copyright (C) 2022 Daniele Bochicchio, All Rights Reserved
+# For updates see https://github.com/dbochicchio/reactor-mqtt-contrib
+#
+# *** IMPORTANT ***
+# You can import into your own templates by pasting into a "templates" section 
+# to a file named local_mqtt_devices.yaml in your config directory.
+---
+version: 22324
+revision: 2
+format: 1
+
+templates:
+  # Shelly HEM
+  shelly_hem:
+    type: ValueSensor
+    capabilities: ['power_sensor', 'energy_sensor', 'voltage_sensor', 'current_sensor', 'power_factor_sensor', 'x_energy_sensor_exported']
+    primary_attribute: power_sensor.value
+    requires: [topic, channel]
+    description: Shelly HEM
+    contributor_name: Daniele Bochicchio
+    contributor_url: https://github.com/dbochicchio/reactor-mqtt-contrib
+    lwt: "tele/%topic%/LWT"
+    init:
+      - topic: "shellies/%topic%/command"
+        payload: "update"
+        qos: 0
+        retain: false
+    events:
+      "shellies/%topic%/emeter/%channel%/power":
+        "power_sensor.value":
+          expr: 'float(payload)'
+        "power_sensor.units": "W"
+        "current_sensor.value":
+          if_expr: '! isnull(payload) && ! isnull(entity.attributes.voltage_sensor.value)'
+          expr: 'round(float(payload) / entity.attributes.voltage_sensor.value, 2)'
+        "current_sensor.units": "A"
+      "shellies/%topic%/emeter/%channel%/voltage":
+        "voltage_sensor.value":
+          expr: 'float(payload)'
+        "voltage_sensor.units": "V"
+        "current_sensor.value":
+          if_expr: '! isnull(payload) && ! isnull(entity.attributes.power_sensor.value)'
+          expr: 'round(entity.attributes.power_sensor.value / float(payload), 2)'
+        "current_sensor.units": "A"
+      "shellies/%topic%/emeter/%channel%/total":
+        "energy_sensor.value":
+          expr: 'round(float(payload) * 0.001, 4)' # 1 Wh = 0.001 kWh - value * 0.001
+        "energy_sensor.units": "KWH"
+      "shellies/%topic%/emeter/%channel%/total_returned":
+        "x_energy_sensor_exported.value":
+          expr: 'round(float(payload) * 0.001, 4)' # 1 Wh = 0.001 kWh - value * 0.001
+        "x_energy_sensor_exported.units": "KWH"
+      "shellies/%topic%/emeter/%channel%/pf":
+        "power_factor_sensor.value":
+          expr: 'float(payload)'

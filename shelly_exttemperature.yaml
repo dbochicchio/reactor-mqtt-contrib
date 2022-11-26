@@ -1,0 +1,34 @@
+# mqtt_devices.yaml
+#
+# Copyright (C) 2022 Daniele Bochicchio, All Rights Reserved
+# For updates see https://github.com/dbochicchio/reactor-mqtt-contrib
+#
+# *** IMPORTANT ***
+# You can import into your own templates by pasting into a "templates" section 
+# to a file named local_mqtt_devices.yaml in your config directory.
+---
+version: 22324
+revision: 2
+format: 1
+
+templates:
+  # Shelly with external temp sensor
+  shelly_exttemperature:
+    type: ValueSensor
+    capabilities: ['temperature_sensor']
+    primary_attribute: temperature_sensor.value
+    requires: [topic, channel]
+    description: Shelly with external temperature sensors
+    contributor_name: Daniele Bochicchio
+    contributor_url: https://github.com/dbochicchio/reactor-mqtt-contrib
+    lwt: "tele/%topic%/LWT"
+    init:
+      - topic: "shellies/%topic%/command"
+        payload: "update"
+        qos: 0
+        retain: false
+    events:
+      "shellies/%topic%/ext_temperature/%channel%":
+        "temperature_sensor.value":
+          expr: 'float(payload)'
+        "temperature_sensor.units": "C"
