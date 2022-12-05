@@ -37,4 +37,4 @@ Look at the table below for other parameters.
 | shelly_exthumidity | Shelly with external humidity sensor | humidity_sensor | topic, channel |
 | tasmota_sensor_pressure | Tasmota with Pressure sensor | value_sensor | topic, source |
 | tasmota_sensor_illuminance | Tasmota with Illuminance sensor | light_sensor | topic, source |
-| switchbot_switch| Switchbot Switch mapped from https://github.com/fphammerle/switchbot-mqtt | topic |
+| switchbot_switch | Switchbot Switch mapped from https://github.com/fphammerle/switchbot-mqtt | power_switch, toggle, battery_power | topic |
