@@ -4,8 +4,9 @@
 # For updates see https://github.com/dbochicchio/reactor-mqtt-contrib
 #
 # *** IMPORTANT ***
-# You can import into your own templates by pasting into a "templates" section 
-# to a file named local_mqtt_devices.yaml in your config directory.
+# Just copy this file under reactor/config/mqtt_templates. 
+# If mqtt_templates directory does not exist, simply create it.
+# Copy the files and restart Reactor. Every time you update the files, a restart is needed.
 ---
 version: 22323
 revision: 1

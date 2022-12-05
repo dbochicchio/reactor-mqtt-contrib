@@ -1,0 +1,46 @@
+# switchbot_switch.yaml
+#
+# Copyright (C) 2022 Daniele Bochicchio, All Rights Reserved
+# For updates see https://github.com/dbochicchio/reactor-mqtt-contrib
+#
+# *** IMPORTANT ***
+# Just copy this file under reactor/config/mqtt_templates. 
+# If mqtt_templates directory does not exist, simply create it.
+# Copy the files and restart Reactor. Every time you update the files, a restart is needed.
+---
+version: 22324
+revision: 1
+format: 1
+
+templates:
+  # Switchbot mapped from https://github.com/fphammerle/switchbot-mqtt
+  switchbot_switch:
+    type: Switch
+    capabilities: ['power_switch', 'toggle', 'battery_power']
+    primary_attribute: power_switch.state
+    requires: [topic]
+    description: Switchbot switch mapped via switchbot-mqtt
+    contributor_name: Daniele Bochicchio
+    contributor_url: https://github.com/dbochicchio/reactor-mqtt-contrib
+    lwt: "homeassistant/switchbot-mqtt/status"
+    events:
+      "homeassistant/switch/switchbot/%topic%/state":
+        "power_switch.state":
+          expr: 'payload == "ON"'
+      "homeassistant/switch/switchbot/%topic%/battery-percentage":
+        "battery_power.level":
+          expr: 'float(payload ?? 0)/100'
+    actions:
+      power_switch:
+        "on":
+          topic: "homeassistant/switch/switchbot/%topic%/set"
+          payload: "ON"
+        "off":
+          topic: "homeassistant/switch/switchbot/%topic%/set"
+          payload: "OFF"
+        set:
+          topic: "homeassistant/switch/switchbot/%topic%/set"
+          payload:
+            expr: "parameters.state ? 'ON' : 'OFF'"
+            type: raw
+      # toggle.toggle is implemented by the default handler in MQTTController

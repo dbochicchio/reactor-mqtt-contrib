@@ -4,8 +4,9 @@
 # For updates see https://github.com/dbochicchio/reactor-mqtt-contrib
 #
 # *** IMPORTANT ***
-# You can import into your own templates by pasting into a "templates" section 
-# to a file named local_mqtt_devices.yaml in your config directory.
+# Just copy this file under reactor/config/mqtt_templates. 
+# If mqtt_templates directory does not exist, simply create it.
+# Copy the files and restart Reactor. Every time you update the files, a restart is needed.
 ---
 version: 22324
 revision: 2
@@ -31,6 +32,9 @@ templates:
       "shellies/%topic%/relay/%channel%":
         "power_switch.state":
           expr: 'payload == "on"'
+        "power_sensor.value": # reset immediately to 0 when turned off
+          expr: '0'
+          if_expr: 'payload == "off"'
       "shellies/%topic%/relay/%channel%/power":
         "power_sensor.value":
           expr: 'float(payload)'
