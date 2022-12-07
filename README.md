@@ -26,6 +26,8 @@ Let's say you want to map a Shelly HEM. In your *reactor.yaml*, under *controlle
 Where *shelly-solar* is the device name (configured in your Shelly as the MQTT topic) and channel is the index (Shelly HEM supports 2 clamps).
 Look at the table below for other parameters.
 
+All the templates are supporting query/init, and at startup their state will be updated. *x_mqtt.poll* could be used to poll specific devices in reaction.
+
 # Templates
 
 | Template ID | Device | Capabilities | Parameters |

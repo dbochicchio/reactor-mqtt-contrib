@@ -8,7 +8,7 @@
 # If mqtt_templates directory does not exist, simply create it.
 # Copy the files and restart Reactor. Every time you update the files, a restart is needed.
 ---
-version: 22324
+version: 22340
 revision: 1
 format: 1
 
@@ -16,20 +16,23 @@ templates:
   # Switchbot mapped from https://github.com/fphammerle/switchbot-mqtt
   switchbot_switch:
     type: Switch
-    capabilities: ['power_switch', 'toggle', 'battery_power']
+    capabilities: ["power_switch", "toggle", "battery_power"]
     primary_attribute: power_switch.state
     requires: [topic]
     description: Switchbot switch mapped via switchbot-mqtt
     contributor_name: Daniele Bochicchio
     contributor_url: https://github.com/dbochicchio/reactor-mqtt-contrib
     lwt: "homeassistant/switchbot-mqtt/status"
+    query: "homeassistant/switch/switchbot/%topic%/request-device-info"
     events:
       "homeassistant/switch/switchbot/%topic%/state":
         "power_switch.state":
           expr: 'payload == "ON"'
       "homeassistant/switch/switchbot/%topic%/battery-percentage":
         "battery_power.level":
-          expr: 'float(payload ?? 0)/100'
+          expr: "float(payload ?? 0)/100"
+        "battery_power.since":
+          expr: 'time()'
     actions:
       power_switch:
         "on":

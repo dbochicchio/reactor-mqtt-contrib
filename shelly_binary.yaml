@@ -4,11 +4,10 @@
 # For updates see https://github.com/dbochicchio/reactor-mqtt-contrib
 #
 # *** IMPORTANT ***
-# Just copy this file under reactor/config/mqtt_templates. 
-# If mqtt_templates directory does not exist, simply create it.
-# Copy the files and restart Reactor. Every time you update the files, a restart is needed.
+# You can import into your own templates by pasting into a "templates" section 
+# to a file named local_mqtt_devices.yaml in your config directory.
 ---
-version: 22324
+version: 22340
 revision: 1
 format: 1
 
@@ -23,7 +22,7 @@ templates:
     contributor_name: Daniele Bochicchio
     contributor_url: https://github.com/dbochicchio/reactor-mqtt-contrib
     lwt: "tele/%topic%/LWT"
-    init:
+    query:
       - topic: "shellies/%topic%/command"
         payload:
           update: true
