@@ -16,7 +16,7 @@ Copy the files and restart Reactor. Every time you update the files, a restart i
 | shelly_exthumidity | Shelly with external humidity sensor | humidity_sensor | topic, channel |
 | tasmota_sensor_pressure | Tasmota with Pressure sensor | value_sensor | topic, source |
 | tasmota_sensor_illuminance | Tasmota with Illuminance sensor | light_sensor | topic, source |
-| switchbot_switch | Switchbot Switch mapped from (switchbot-mqtt|https://github.com/fphammerle/switchbot-mqtt) | power_switch, toggle, battery_power | topic |
+| switchbot_switch | Switchbot Switch mapped from [switchbot-mqtt](https://github.com/fphammerle/switchbot-mqtt) | power_switch, toggle, battery_power | topic |
 | owntracks_sensor | OwnTracks Sensor with multiple informations (position, current region, device battery). See additional configuration for info. | string_sensor, binary_sensor, battery_power, battery_maintenance, location | prefix, topic,  homeRegionName |
 
 All the templates are supporting query/init, and at startup their state will be updated. *x_mqtt.poll* could be used to poll specific devices in reaction.
@@ -52,7 +52,7 @@ This template will create a device that has:
  - locations info via *location* capability
  - battery info for the device (including percentage and charging status)
 
-Please refer to (OwnTracks documentation|https://owntracks.org/booklet/guide/topics/) for more info about the topics structure.
+Please refer to [OwnTracks documentation](https://owntracks.org/booklet/guide/topics/) for more info about the topics structure.
 
 Let's suppose your base topic for owntracks is `owntracks/daniele/iPhone`.
 
