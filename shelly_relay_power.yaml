@@ -1,4 +1,4 @@
-# mqtt_devices.yaml
+# shelly_relay_power.yaml
 #
 # Copyright (C) 2022 Daniele Bochicchio, All Rights Reserved
 # For updates see https://github.com/dbochicchio/reactor-mqtt-contrib
@@ -16,7 +16,7 @@ templates:
   # Shelly relay with power meter
   shelly_relay_power:
     type: Switch
-    capabilities: ['power_switch', 'toggle', 'power_sensor', 'energy_sensor']
+    capabilities: ["power_switch", "toggle", "power_sensor", "energy_sensor"]
     primary_attribute: power_switch.state
     requires: [topic, channel]
     description: Shelly relay with power meter
@@ -31,17 +31,17 @@ templates:
     events:
       "shellies/%topic%/relay/%channel%":
         "power_switch.state":
-          expr: 'payload == "on"'
+          expr: "payload == 'on'"
         "power_sensor.value":
-          expr: '0'
-          if_expr: 'payload == "off"'
+          expr: "0"
+          if_expr: "payload == 'off'"
       "shellies/%topic%/relay/%channel%/power":
         "power_sensor.value":
-          expr: 'float(payload)'
+          expr: "float(payload)"
         "power_sensor.units": "W"
       "shellies/%topic%/relay/%channel%/energy":
         "energy_sensor.value":
-          expr: 'round(float(payload) / 0.06, 4)' # value / 60 / 1000
+          expr: "round(float(payload) / 0.06, 4)" # value / 60 / 1000
         "energy_sensor.units": "KWH"
     actions:
       power_switch:

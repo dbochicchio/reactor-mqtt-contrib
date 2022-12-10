@@ -1,0 +1,81 @@
+# owntracks_sensor.yaml
+#
+# Copyright (C) 2022 Daniele Bochicchio, All Rights Reserved
+# For updates see https://github.com/dbochicchio/reactor-mqtt-contrib
+#
+# *** IMPORTANT ***
+# Just copy this file under reactor/config/mqtt_templates. 
+# If mqtt_templates directory does not exist, simply create it.
+# Copy the files and restart Reactor. Every time you update the files, a restart is needed.
+---
+version: 22340
+revision: 1
+format: 1
+
+templates:
+  # Owntracks adavanced templates
+  owntracks_sensor:
+    type: BinarySensor
+    capabilities: ["string_sensor", "binary_sensor", "battery_power", "battery_maintenance", "location"]
+    primary_attribute: string_sensor.value
+    requires: [topic, homeRegionName]
+    description: Owntracks position
+    contributor_name: Daniele Bochicchio
+    contributor_url: https://github.com/dbochicchio/reactor-mqtt-contrib
+    events:
+      # position updates
+      "owntracks/%prefix%/%topic%":
+        # string_sensor for location - support for both native MQTT and MQTT-via-HTTP method
+        "string_sensor.value":
+          json_payload: true
+          if_expr: "payload._type == 'location' || payload._type='transition'"
+          expr:  >
+            payload._type == 'location' ? join( ( payload.inregions ?? [] ), ', ') : 
+            (payload._type == 'transition' && payload.event == 'enter') ? payload.data.description : 
+            null
+            #(payload._type == 'transition' && payload.event == 'leave') ? '' : null
+            
+        # battery_power for phone battery
+        "battery_power.level":
+          json_payload: true
+          if_expr: "!isNaN(payload.batt)"
+          expr: "float(payload.batt)/100"
+        # battery_maintenance for phone battery
+        "battery_maintenance.charging":
+          json_payload: true
+          if_expr: "!isNaN(payload.batt)"
+          expr: "float(payload.bs) != 1"
+        "battery_maintenance.replace":
+          expr: "false"
+        # BinarySensor for home
+        "binary_sensor.state":
+          json_payload: true
+          if_expr: "payload._type == 'location'"
+          expr: >
+            ( first reg in ( payload.inregions ?? [] ) with lower(reg) == lower(homeRegionName): true ) ?? false
+        # location details
+        "location.latitude":
+          json_payload: true
+          expr: "isNaN(payload.lat) ? null : float(payload.lat)"
+        "location.longitude":
+          json_payload: true
+          expr: "isNaN(payload.lon) ? null : float(payload.lon)"
+        "location.elevation":
+          json_payload: true
+          expr: "isNaN(payload.alt) ? null : float(payload.alt)"
+        # lwt
+        "x_mqtt_device.online":
+          json_payload: true
+          if_expr: "payload._type == 'lwt'"
+          expr: "payload.tst < time()/1000"
+          # TODO: check logic
+
+      # etnter/leave topic
+      "owntracks/%prefix%/%topic%/event":
+        # leave BinarySensor for home
+        "binary_sensor.state":
+          json_payload: true
+          if_expr: "payload._type == 'transition' && (payload.event == 'leave' || payload.event == 'enter')"
+          expr:  >
+            ( payload.event == 'leave' && lower(payload.data.description) != lower(homeRegionName) ) ||
+            ( payload.event == 'enter' && lower(payload.data.description) == lower(homeRegionName) )

@@ -1,11 +1,12 @@
-# mqtt_devices.yaml
+# tasmota_sensor_illuminance.yaml
 #
 # Copyright (C) 2022 Daniele Bochicchio, All Rights Reserved
 # For updates see https://github.com/dbochicchio/reactor-mqtt-contrib
 #
 # *** IMPORTANT ***
-# You can import into your own templates by pasting into a "templates" section 
-# to a file named local_mqtt_devices.yaml in your config directory.
+# Just copy this file under reactor/config/mqtt_templates. 
+# If mqtt_templates directory does not exist, simply create it.
+# Copy the files and restart Reactor. Every time you update the files, a restart is needed.
 ---
 version: 22323
 revision: 1
@@ -27,14 +28,14 @@ templates:
       "tele/%topic%/SENSOR":
         "light_sensor.value":
           json_payload: true
-          if_expr: '! isnull( payload?[ source ?? "Global" ] )'
-          expr: 'payload[ source ?? "Global" ]?.Illuminance'
-        "light_sensor.units": 'lux'
+          if_expr: "! isnull( payload?[ source ?? 'Global' ] )"
+          expr: "payload[ source ?? 'Global' ]?.Illuminance"
+        "light_sensor.units": "lux"
         "x_mqtt_tasmota_ir.value":
           json_payload: true
-          if_expr: '! isnull( payload?[ source ?? "Global" ] )'
-          expr: 'payload[ source ?? "Global" ]?.IR'
+          if_expr: "! isnull( payload?[ source ?? 'Global' ] )"
+          expr: "payload[ source ?? 'Global' ]?.IR"
         "x_mqtt_tasmota_broadband.value":
           json_payload: true
-          if_expr: '! isnull( payload?[ source ?? "Global" ] )'
-          expr: 'payload[ source ?? "Global" ]?.Broadband'
+          if_expr: "! isnull( payload?[ source ?? 'Global' ] )"
+          expr: "payload[ source ?? 'Global' ]?.Broadband"

@@ -1,11 +1,12 @@
-# mqtt_devices.yaml
+# shelly_exthumidity.yaml
 #
 # Copyright (C) 2022 Daniele Bochicchio, All Rights Reserved
 # For updates see https://github.com/dbochicchio/reactor-mqtt-contrib
 #
 # *** IMPORTANT ***
-# You can import into your own templates by pasting into a "templates" section 
-# to a file named local_mqtt_devices.yaml in your config directory.
+# Just copy this file under reactor/config/mqtt_templates. 
+# If mqtt_templates directory does not exist, simply create it.
+# Copy the files and restart Reactor. Every time you update the files, a restart is needed.
 ---
 version: 22340
 revision: 1
@@ -15,7 +16,7 @@ templates:
   # Shelly with external humidity sensor
   shelly_exthumidity:
     type: ValueSensor
-    capabilities: ['humidity_sensor']
+    capabilities: ["humidity_sensor"]
     primary_attribute: humidity_sensor.value
     requires: [topic, channel]
     description: Shelly with external humidity sensors
@@ -30,5 +31,5 @@ templates:
     events:
       "shellies/%topic%/ext_humidity/%channel%":
         "humidity_sensor.value":
-          expr: 'float(payload)'
+          expr: "float(payload)"
         "humidity_sensor.units": "%"

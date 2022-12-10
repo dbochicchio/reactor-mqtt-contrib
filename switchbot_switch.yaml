@@ -27,12 +27,12 @@ templates:
     events:
       "homeassistant/switch/switchbot/%topic%/state":
         "power_switch.state":
-          expr: 'payload == "ON"'
+          expr: "payload == 'ON'"
       "homeassistant/switch/switchbot/%topic%/battery-percentage":
         "battery_power.level":
           expr: "float(payload ?? 0)/100"
         "battery_power.since":
-          expr: 'time()'
+          expr: "time()"
     actions:
       power_switch:
         "on":
