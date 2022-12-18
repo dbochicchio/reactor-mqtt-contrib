@@ -5,6 +5,9 @@ Additional MQTT templates for Reactor.
 Download all the yaml files and save them under *reactor/config/mqtt_templates*. If *mqtt_templates* directory does not exist, simply create it.
 Copy the files and restart Reactor. Every time you update the files, a restart is needed.
 
+# How to update
+Just replace the files using the same mechanism introduced for installation and restart Reactor.
+
 # Templates
 
 | Template ID | Device | Capabilities | Parameters |
