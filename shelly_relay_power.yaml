@@ -8,7 +8,7 @@
 # If mqtt_templates directory does not exist, simply create it.
 # Copy the files and restart Reactor. Every time you update the files, a restart is needed.
 ---
-version: 22340
+version: 22350
 revision: 1
 format: 1
 
@@ -22,12 +22,11 @@ templates:
     description: Shelly relay with power meter
     contributor_name: Daniele Bochicchio
     contributor_url: https://github.com/dbochicchio/reactor-mqtt-contrib
-    lwt: "tele/%topic%/LWT"
     query:
-      - topic: "shellies/%topic%/command"
-        payload: "update"
-        qos: 0
-        retain: false
+      topic: "shellies/%topic%/command"
+      payload: "update"
+      qos: 0
+      retain: false
     events:
       "shellies/%topic%/relay/%channel%":
         "power_switch.state":
@@ -43,6 +42,11 @@ templates:
         "energy_sensor.value":
           expr: "round(float(payload) / 0.06, 4)" # value / 60 / 1000
         "energy_sensor.units": "KWH"
+
+      "shellies/%topic%/online":
+        "x_mqtt_device.online":
+          expr: 'bool(payload)'
+          
     actions:
       power_switch:
         "on":

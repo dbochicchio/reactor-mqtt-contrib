@@ -14,9 +14,11 @@ Copy the files and restart Reactor. Every time you update the files, a restart i
 | shelly_binary | Shelly with detached inputs, mapped as binary sensor | binary_sensor | topic, channel |
 | shelly_exttemperature | Shelly with detached inputs, mapped as binary sensor | binary_sensor | topic, channel |
 | shelly_exthumidity | Shelly with external humidity sensor | humidity_sensor | topic, channel |
+| shelly_button1 | Shelly Button 1 | button, battery_power, battery_maintenance | topic, channel |
 | tasmota_sensor_pressure | Tasmota with Pressure sensor | value_sensor | topic, source |
 | tasmota_sensor_illuminance | Tasmota with Illuminance sensor | light_sensor | topic, source |
 | switchbot_switch | Switchbot Switch mapped from [switchbot-mqtt](https://github.com/fphammerle/switchbot-mqtt) | power_switch, toggle, battery_power | topic |
+| fullykiosk | [Fully Kiosk](https://www.fully-kiosk.com/). See additional configuration for info. | string_sensor, binary_sensor, battery_power, battery_maintenance, dimming | topic |
 | owntracks_sensor | OwnTracks Sensor with multiple informations (position, current region, device battery). See additional configuration for info. | string_sensor, binary_sensor, battery_power, battery_maintenance, location | prefix, topic,  homeRegionName |
 
 All the templates are supporting query/init, and at startup their state will be updated. *x_mqtt.poll* could be used to poll specific devices in reaction.
@@ -43,6 +45,15 @@ Where *shelly-solar* is the device name (configured in your Shelly as the MQTT t
 Look at the table above for other parameters.
 
 ## Additional configuration
+
+### Dual switch devices
+
+Dual switch devices, such as Shelly 2 or 2.5, should be mapped using separate device for each channel. Simnply specify *channel* parameters accordingly.
+
+### Shelly Uni
+
+Shelly Uni is offering two inputs and two outputs, so you should map it using *shelly_relay* (using *channel* as 0 or 1) and *shelly_binary* (using *channel* as 0 or 1).
+You'll end up with 4 devices, 2 mapping the inputs and 2 mapping the outputs.
 
 ### OwnTracks
 
@@ -72,3 +83,7 @@ Where `prefix` is the first part of the MQTT topic (*daniele* in our case) and `
 `homeRegionName` is the name of your home region and will be used in order to update the binary sensor. It's case insensitive.
 
 If you have multiple devices to track, just repeat the same configuration, using a different entity ID.
+
+### Fully Kiosk
+
+The device is mapping binary sensor (for screen turned on/off), dimming (for screen brigthness), battery level and charging status (plugged-in, battery power), and string_sensor that's showing the current app. Unfortunately, Fully Kiosk only supports commands via HTTP and thus a virtual device is needed to send commands.

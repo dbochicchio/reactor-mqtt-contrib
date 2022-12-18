@@ -1,0 +1,104 @@
+# fullykiosk.yaml
+#
+# Copyright (C) 2022 Daniele Bochicchio, All Rights Reserved
+# For updates see https://github.com/dbochicchio/reactor-mqtt-contrib
+#
+# *** IMPORTANT ***
+# Just copy this file under reactor/config/mqtt_templates. 
+# If mqtt_templates directory does not exist, simply create it.
+# Copy the files and restart Reactor. Every time you update the files, a restart is needed.
+---
+version: 22350
+revision: 1
+format: 1
+
+templates:
+  # fullykiosk
+  fullykiosk:
+    type: BinarySensor
+    capabilities: ["string_sensor", "binary_sensor", "battery_power", "battery_maintenance", "dimming"]
+    primary_attribute: string_sensor.value
+    requires: [topic]
+    description: Fully Kiosk device
+    contributor_name: Daniele Bochicchio
+    contributor_url: https://github.com/dbochicchio/reactor-mqtt-contrib
+    events:
+    
+#The complete device info will be published every 60 seconds as fully/deviceInfo/[deviceId] topic (retaining, QOS=1).
+#Following events are implemented for now: screenOn, screenOff, pluggedAC, pluggedUSB, pluggedWireless, unplugged, networkReconnect,
+#networkDisconnect, internetReconnect, internetDisconnect, powerOn, powerOff, showKeyboard, hideKeyboard, onMotion, onDarkness, onMovement, 
+#volumeUp, volumeDown, onQrScanCancelled, onBatteryLevelChanged, onScreensaverStart, onScreensaverStop, onDaydreamStart, onDaydreamStop, onItemPlay,
+#onPlaylistPlay, facesDetected.
+
+      # device update
+      "fully/deviceInfo/%topic%":
+        "string_sensor.value":
+          json_payload: true
+          expr:  "payload.foreground ?? ''"
+            
+        # battery_power
+        "battery_power.level":
+          json_payload: true
+          if_expr: "!isNaN(payload.batteryLevel)"
+          expr: "float(payload.batteryLevel)/100"
+        # battery_maintenance
+        "battery_maintenance.charging":
+          json_payload: true
+          if_expr: "payload.isPlugged != undefined"
+          expr: "bool(payload.isPlugged)"
+        "battery_maintenance.replace":
+          expr: "false"
+        "battery_maintenance.rechargeable":
+          expr: "true"
+
+        # binary sensor for screen status
+        "binary_sensor.state":
+          json_payload: true
+          if_expr: "payload.screenOn && !isNaN(payload.screenBrightness)"
+          expr: "bool(payload.screenOn) && int(payload.screenBrightness) > 0"
+
+        # dimming level for screen status
+        "dimming.level":
+          json_payload: true
+          if_expr: "!isNaN(payload.screenBrightness)"
+          expr: "int(payload.screenBrightness) / 255"
+
+        # lwt
+        # "x_mqtt_device.online":
+        #   json_payload: true
+        #   if_expr: "payload._type == 'lwt'"
+        #   expr: "payload.tst < time()/1000"
+
+      # battery level
+      "fully/event/onbatterylevelchanged/%topic%":
+        "battery_power.level":
+          json_payload: true
+          if_expr: "!isNaN(payload.level)"
+          expr: "float(payload.level)/100"
+
+      # binary sensor for screen status
+      "fully/event/onScreensaverStart/%topic%":
+        "binary_sensor.state":
+          expr:  "bool(false)"
+        "dimming.level":
+          expr:  "int(0)"
+      "fully/event/onScreensaverStop/%topic%":
+        "binary_sensor.state":
+          expr:  "bool(true)"
+
+      # battery_maintenance to get charging status
+      "fully/event/unplugged/%topic%":
+        "battery_maintenance.charging":
+          expr:  "bool(false)"
+
+      "fully/event/pluggedAC/%topic%":
+        "battery_maintenance.charging":
+          expr:  "bool(true)"
+
+      "fully/event/pluggedUSB/%topic%":
+        "battery_maintenance.charging":
+          expr:  "bool(true)"
+
+      "fully/event/pluggedWireless/%topic%":
+        "battery_maintenance.charging":
+          expr:  "bool(true)"

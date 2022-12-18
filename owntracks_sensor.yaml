@@ -8,7 +8,7 @@
 # If mqtt_templates directory does not exist, simply create it.
 # Copy the files and restart Reactor. Every time you update the files, a restart is needed.
 ---
-version: 22340
+version: 22350
 revision: 1
 format: 1
 
@@ -31,9 +31,8 @@ templates:
           if_expr: "payload._type == 'location' || payload._type='transition'"
           expr:  >
             payload._type == 'location' ? join( ( payload.inregions ?? [] ), ', ') : 
-            (payload._type == 'transition' && payload.event == 'enter') ? payload.data.description : 
+            (payload._type == 'transition' && payload.event == 'enter') ? payload.data?.description : 
             null
-            #(payload._type == 'transition' && payload.event == 'leave') ? '' : null
             
         # battery_power for phone battery
         "battery_power.level":
@@ -43,7 +42,7 @@ templates:
         # battery_maintenance for phone battery
         "battery_maintenance.charging":
           json_payload: true
-          if_expr: "!isNaN(payload.batt)"
+          if_expr: "!isNaN(payload.bs)"
           expr: "float(payload.bs) != 1"
         "battery_maintenance.replace":
           expr: "false"
@@ -66,16 +65,16 @@ templates:
         # lwt
         "x_mqtt_device.online":
           json_payload: true
+          # TODO: check if this is consistent. every message will update online status
           if_expr: "payload._type == 'lwt'"
           expr: "payload.tst < time()/1000"
-          # TODO: check logic
 
-      # etnter/leave topic
+      # enter/leave topics
       "owntracks/%prefix%/%topic%/event":
         # leave BinarySensor for home
         "binary_sensor.state":
           json_payload: true
           if_expr: "payload._type == 'transition' && (payload.event == 'leave' || payload.event == 'enter')"
           expr:  >
-            ( payload.event == 'leave' && lower(payload.data.description) != lower(homeRegionName) ) ||
-            ( payload.event == 'enter' && lower(payload.data.description) == lower(homeRegionName) )
+            ( payload.event == 'leave' && lower(payload.data?.description ?? '') != lower(homeRegionName) ) ||
+            ( payload.event == 'enter' && lower(payload.data?.description ?? '') == lower(homeRegionName) )

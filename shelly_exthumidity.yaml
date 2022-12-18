@@ -8,7 +8,7 @@
 # If mqtt_templates directory does not exist, simply create it.
 # Copy the files and restart Reactor. Every time you update the files, a restart is needed.
 ---
-version: 22340
+version: 22350
 revision: 1
 format: 1
 
@@ -22,14 +22,17 @@ templates:
     description: Shelly with external humidity sensors
     contributor_name: Daniele Bochicchio
     contributor_url: https://github.com/dbochicchio/reactor-mqtt-contrib
-    lwt: "tele/%topic%/LWT"
     query:
-      - topic: "shellies/%topic%/command"
-        payload: "update"
-        qos: 0
-        retain: false
+      topic: "shellies/%topic%/command"
+      payload: "update"
+      qos: 0
+      retain: false
     events:
       "shellies/%topic%/ext_humidity/%channel%":
         "humidity_sensor.value":
           expr: "float(payload)"
         "humidity_sensor.units": "%"
+
+      "shellies/%topic%/online":
+        "x_mqtt_device.online":
+          expr: 'bool(payload)'

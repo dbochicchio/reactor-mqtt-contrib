@@ -1,0 +1,56 @@
+# shelly_button1.yaml
+#
+# Copyright (C) 2022 Daniele Bochicchio, All Rights Reserved
+# For updates see https://github.com/dbochicchio/reactor-mqtt-contrib
+#
+# *** IMPORTANT ***
+# Just copy this file under reactor/config/mqtt_templates. 
+# If mqtt_templates directory does not exist, simply create it.
+# Copy the files and restart Reactor. Every time you update the files, a restart is needed.
+---
+version: 22340
+revision: 1
+format: 1
+
+templates:
+  # Shelly Button 1
+  shelly_button1:
+    type: Button
+    capabilities: ["button", "battery_power", "battery_maintenance"]
+    primary_attribute: button.state
+    requires: [topic]
+    description: Shelly Button 1
+    contributor_name: Daniele Bochicchio
+    contributor_url: https://github.com/dbochicchio/reactor-mqtt-contrib
+    query:
+      topic: "shellies/%topic%/command"
+      payload: "update"
+      qos: 0
+      retain: false
+    events:
+      "shellies/%topic%/input_event/0":
+        "button.state":
+          json_payload: true
+          expr: >
+             payload.event == "S" ? "single" :
+             payload.event == "SS" ? "double" :
+             payload.event == "SSS" ? "triple" :
+             payload.event == "L" ? "long" :
+             "unknown"
+
+      # battery_power
+      "shellies/%topic%/sensor/battery":
+        "battery_power.level":
+          expr: "float(payload)/100"
+      # battery_maintenance
+      "shellies/%topic%/sensor/charger":
+        "battery_maintenance.charging":
+          expr: "bool(payload)"
+        "battery_maintenance.replace":
+          expr: "false"
+        "battery_maintenance.rechargeable":
+          expr: "true"
+
+      "shellies/%topic%/online":
+        "x_mqtt_device.online":
+          expr: 'bool(payload)'

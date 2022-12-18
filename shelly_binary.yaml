@@ -22,15 +22,16 @@ templates:
     description: Shelly with detached inputs, mapped as binary sensor
     contributor_name: Daniele Bochicchio
     contributor_url: https://github.com/dbochicchio/reactor-mqtt-contrib
-    lwt: "tele/%topic%/LWT"
     query:
-      - topic: "shellies/%topic%/command"
-        payload:
-          update: true
-        type: json
-        qos: 0
-        retain: false
+      topic: "shellies/%topic%/command"
+      payload: "update"
+      qos: 0
+      retain: false
     events:
       "shellies/%topic%/input/%channel%":
         "binary_sensor.state":
           expr: "float(payload) == 1"
+
+      "shellies/%topic%/online":
+        "x_mqtt_device.online":
+          expr: 'bool(payload)'
