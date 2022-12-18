@@ -48,7 +48,7 @@ Look at the table above for other parameters.
 
 ### Dual switch devices
 
-Dual switch devices, such as Shelly 2 or 2.5, should be mapped using separate device for each channel. Simnply specify *channel* parameters accordingly.
+Dual switch devices, such as Shelly 2 or 2.5, should be mapped using separate device for each channel. Simply specify *channel* parameters accordingly.
 
 ### Shelly Uni
 
@@ -87,3 +87,6 @@ If you have multiple devices to track, just repeat the same configuration, using
 ### Fully Kiosk
 
 The device is mapping binary sensor (for screen turned on/off), dimming (for screen brigthness), battery level and charging status (plugged-in, battery power), and string_sensor that's showing the current app. Unfortunately, Fully Kiosk only supports commands via HTTP and thus a virtual device is needed to send commands.
+
+# Support
+Please post to [OwnTracks documentation](https://smarthome.community/) and tag me (@therealdb).
