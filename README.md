@@ -22,7 +22,7 @@ Just replace the files using the same mechanism introduced for installation and 
 | tasmota_sensor_illuminance | Tasmota with Illuminance sensor | light_sensor | topic, source |
 | switchbot_switch | Switchbot Switch mapped from [switchbot-mqtt](https://github.com/fphammerle/switchbot-mqtt) | power_switch, toggle, battery_power | topic |
 | fullykiosk | [Fully Kiosk](https://www.fully-kiosk.com/). See additional configuration for info. | string_sensor, binary_sensor, battery_power, battery_maintenance, dimming | topic |
-| owntracks_sensor | OwnTracks Sensor with multiple informations (position, current region, device battery). See additional configuration for info. | string_sensor, binary_sensor, battery_power, battery_maintenance, location | prefix, topic,  homeRegionName |
+| owntracks_sensor | OwnTracks Sensor with multiple informations (position, current region, device battery). See additional configuration for info. | string_sensor, binary_sensor, battery_power, battery_maintenance, location | prefix, topic, homeRegionName, notHomeRegionName |
 
 All the templates are supporting query/init, and at startup their state will be updated. *x_mqtt.poll* could be used to poll specific devices in reaction.
 
@@ -80,10 +80,12 @@ In your *reactor.yaml*, under *controllers:*, search for *mqtt*, and then under 
           topic: "iPhone"
           uses_template: owntracks_sensor
           homeRegionName: "home"
+          notHomeRegionName: "not_home"
 ```
 
 Where `prefix` is the first part of the MQTT topic (*daniele* in our case) and `topic` is the last part, typically the device (*iPhone*).
 `homeRegionName` is the name of your home region and will be used in order to update the binary sensor. It's case insensitive.
+`notHomeRegionName` is the name of the region when not home. If omitted, it's null.
 
 If you have multiple devices to track, just repeat the same configuration, using a different entity ID.
 

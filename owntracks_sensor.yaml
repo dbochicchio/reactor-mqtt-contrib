@@ -9,7 +9,7 @@
 # Copy the files and restart Reactor. Every time you update the files, a restart is needed.
 ---
 version: 22352
-revision: 1
+revision: 2
 format: 1
 
 templates:
@@ -18,7 +18,7 @@ templates:
     type: BinarySensor
     capabilities: ["string_sensor", "binary_sensor", "battery_power", "battery_maintenance", "location"]
     primary_attribute: string_sensor.value
-    requires: [topic, homeRegionName]
+    requires: [topic, prefix, homeRegionName]
     description: Owntracks position
     contributor_name: Daniele Bochicchio
     contributor_url: https://github.com/dbochicchio/reactor-mqtt-contrib
@@ -32,7 +32,7 @@ templates:
           expr:  >
             payload._type == 'location' ? join( ( payload.inregions ?? [] ), ', ') : 
             (payload._type == 'transition' && payload.event == 'enter') ? payload.data?.description : 
-            null
+            (notHomeRegionName ?? null)
             
         # battery_power for phone battery
         "battery_power.level":
