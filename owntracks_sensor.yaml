@@ -32,7 +32,7 @@ templates:
           expr:  >
             payload._type == 'location' ? join( ( payload.inregions ?? [] ), ', ') : 
             (payload._type == 'transition' && payload.event == 'enter') ? payload.data?.description : 
-            (notHomeRegionName ?? null)
+            (notHomeRegionName ?? '')
             
         # battery_power for phone battery
         "battery_power.level":
