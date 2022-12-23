@@ -1,11 +1,15 @@
 # reactor-mqtt-contrib
-Additional MQTT templates for Reactor.
+
+This repo contains additional MQTT templates for Reactor.
 
 # Installation
+
 Download all the yaml files and save them under *reactor/config/mqtt_templates*. If *mqtt_templates* directory does not exist, simply create it.
 Copy the files and restart Reactor. Every time you update the files, a restart is needed.
+You could also just download all this repo, and copy the ZIP file in the same directory, instead of single files.
 
 # How to update
+
 Just replace the files using the same mechanism introduced for installation and restart Reactor.
 
 # Templates
@@ -23,6 +27,7 @@ Just replace the files using the same mechanism introduced for installation and 
 | switchbot_switch | Switchbot Switch mapped from [switchbot-mqtt](https://github.com/fphammerle/switchbot-mqtt) | power_switch, toggle, battery_power | topic |
 | fullykiosk | [Fully Kiosk](https://www.fully-kiosk.com/). See additional configuration for info. | string_sensor, binary_sensor, battery_power, battery_maintenance, dimming | topic |
 | owntracks_sensor | OwnTracks Sensor with multiple informations (position, current region, device battery). See additional configuration for info. | string_sensor, binary_sensor, battery_power, battery_maintenance, location | prefix, topic, homeRegionName, notHomeRegionName |
+| prism_solar_charger,  prism_solar_session | Prism Solar EV Charger from [Silla Industries](https://silla.industries/en/docs/prism/prism-use-and-maintenance/). See additional configuration for info. | ev_charger, power_switch, toggle, power_sensor, energy_sensor, voltage_sensor, current_sensor | topic, channel |
 
 All the templates are supporting query/init, and at startup their state will be updated. *x_mqtt.poll* could be used to poll specific devices in reaction.
 
@@ -89,9 +94,35 @@ Where `prefix` is the first part of the MQTT topic (*daniele* in our case) and `
 
 If you have multiple devices to track, just repeat the same configuration, using a different entity ID.
 
+### Prism Solar
+
+To fully support this EV Charger, you'll need to map two devices:
+
+```
+        ...
+        # prism
+        prism_solar_charger:
+          name: "Prism"
+          topic: "prism"
+          channel: 1
+          uses_template: prism_solar_charger
+
+        prism_solar_session:
+          name: "Prism: session info"
+          topic: "prism"
+          channel: 1
+          uses_template: prism_solar_session
+```
+
+The first device will implement the charger and its commands. The second one will show the information (power, current and energy) for the current charging session.
+*channel* is usually 1, unless you have a Prism Solar Duo. In this case, you'll need to map multiple devices using *prism_solar_charger* as base template.
+Neither poll nor LWT are supported by Prism Solar.
+Night mode is not supported by MQTT messages, but it's easily achievable with Reactor capabilities.
+
 ### Fully Kiosk
 
 The device is mapping binary sensor (for screen turned on/off), dimming (for screen brigthness), battery level and charging status (plugged-in, battery power), and string_sensor that's showing the current app. Unfortunately, Fully Kiosk only supports commands via HTTP and thus a virtual device is needed to send commands.
 
 # Support
-Please post to [SmartHome Community](https://smarthome.community/) and tag me (@therealdb).
+
+Please post to the [SmartHome Community](https://smarthome.community/) and tag me (@therealdb).

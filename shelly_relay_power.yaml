@@ -32,8 +32,8 @@ templates:
         "power_switch.state":
           expr: "payload == 'on'"
         "power_sensor.value":
-          expr: "0"
           if_expr: "payload == 'off'"
+          expr: "float(0)"
       "shellies/%topic%/relay/%channel%/power":
         "power_sensor.value":
           expr: "float(payload)"

@@ -1,0 +1,137 @@
+# prism_solar.yaml
+#
+# Copyright (C) 2022 Daniele Bochicchio, All Rights Reserved
+# For updates see https://github.com/dbochicchio/reactor-mqtt-contrib
+#
+# *** IMPORTANT ***
+# Just copy this file under reactor/config/mqtt_templates. 
+# If mqtt_templates directory does not exist, simply create it.
+# Copy the files and restart Reactor. Every time you update the files, a restart is needed.
+---
+version: 22356
+revision: 1
+format: 1
+
+templates:
+  # prism_solar: charger
+  prism_solar_charger:
+    type: ValueSensor
+    capabilities: ["ev_charger", "power_switch", "toggle", "power_sensor", "energy_sensor", "voltage_sensor", "current_sensor"]
+    primary_attribute: ev_charger.state
+    requires: [topic, channel]
+    description: "Prism Solar EV Charger device to handle the command and get the current status"
+    contributor_name: Daniele Bochicchio
+    contributor_url: https://github.com/dbochicchio/reactor-mqtt-contrib
+    events:
+      # power_sensor
+      "%topic%/%channel%/w":
+        "power_sensor.value":
+          expr: "float(payload)"
+        "power_sensor.units": "W"
+
+      # current_sensor
+      "%topic%/%channel%/amp":
+        "current_sensor.value":
+          expr: "float(payload) / 1000"
+        "current_sensor.units": "A"
+
+      # voltage_sensor
+      "%topic%/%channel%/volt":
+        "voltage_sensor.value":
+          expr: "float(payload)"
+        "voltage_sensor.units": "V"
+
+      # energy_sensor
+      "%topic%/%channel%/wh_total":
+        "energy_sensor.value":
+          expr: "round(float(payload) * 0.001, 4)" # 1 Wh = 0.001 kWh - value * 0.001
+        "energy_sensor.units": "KWH"
+
+      # ev_charger
+      "%topic%/%channel%/state":
+        "ev_charger.state":
+          expr:  >
+            payload == '1' ? 'not connected' : 
+            payload == '2' ? 'ready' : 
+            payload == '3' ? 'charging' : 
+            'suspended'
+        "ev_charger.operating_state":
+          expr:  >
+            payload == '3' ? 'charge' : 
+            'standby'
+        "power_switch.state":
+          expr: "payload == '2'"
+      "%topic%/%channel%/mode":
+        "ev_charger.mode":
+          expr: "payload"
+        "ev_charger.schedule":
+          expr:  >
+            payload == '1' ? 'solar' : 
+            'normal'
+      "%topic%/%channel%/error":
+        "ev_charger.error":
+          expr: "payload"
+        "ev_charger.state":
+          if_expr: "float(payload) != 0"
+          expr: "error"
+          type: "raw"
+      "%topic%/%channel%/session_time":
+        "ev_charger.duration":
+          expr: "int(payload) * 1000" # from sec to millisecs
+
+    actions:
+      power_switch:
+        "on":
+          topic: "%topic%/%channel%/command/set_mode"
+          payload: "2" #normal
+        "off":
+          topic: "%topic%/%channel%/command/set_mode"
+          payload: "3" #pause
+        "set":
+          topic: "%topic%/%channel%/command/set_mode"
+          payload:
+            expr: "parameters.state ? '2' : '3'"
+      ev_charger:
+        "set_current":
+          topic: "%topic%/%channel%/command/set_current_limit"
+          payload:
+            expr: "float(parameters.limit)"
+        "set_operating_mode":
+          topic: "%topic%/%channel%/command/set_mode"
+          payload:
+            expr: "parameters.mode == 'charge' ? '2' : '1'"
+        "set_schedule":
+          topic: "%topic%/%channel%/command/set_mode"
+          payload:
+            expr:  >
+                ev_charger.mode != '3' ?
+                (parameters.mode == 'solar' ? '1' : '2') : 
+                '3'
+
+  # prism_solar: current session
+  prism_solar_session:
+    type: ValueSensor
+    capabilities: ["power_sensor", "energy_sensor", "current_sensor"]
+    primary_attribute: power_sensor.value
+    requires: [topic, channel]
+    description: "Prism Solar EV Charger device to handle the charging session"
+    contributor_name: Daniele Bochicchio
+    contributor_url: https://github.com/dbochicchio/reactor-mqtt-contrib
+    events:
+      # power_sensor
+      "%topic%/%channel%/w":
+        "power_sensor.value":
+          expr: "float(payload)"
+        "power_sensor.units": "W"
+
+      # energy_sensor
+      "%topic%/%channel%/wh":
+        "energy_sensor.value":
+          expr: "round(float(payload) * 0.001, 4)" # 1 Wh = 0.001 kWh - value * 0.001
+        "energy_sensor.units": "KWH"
+
+      # current_sensor
+      "%topic%/%channel%/user_amp":
+        "current_sensor.value":
+          expr: "float(payload)"
+        "current_sensor.units": "A"
