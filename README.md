@@ -123,6 +123,10 @@ Night mode is not supported by MQTT messages, but it's easily achievable with Re
 
 The device is mapping binary sensor (for screen turned on/off), dimming (for screen brigthness), battery level and charging status (plugged-in, battery power), and string_sensor that's showing the current app. Unfortunately, Fully Kiosk only supports commands via HTTP and thus a virtual device is needed to send commands.
 
+# Changelog
+
+*22363*: Fixes for *prism_solar*; *owntracks_sensor* now fully supports *notHomeRegionName*, better handling of region transitions.
+
 # Support
 
 Please post to the [SmartHome Community](https://smarthome.community/) and tag me (@therealdb).
