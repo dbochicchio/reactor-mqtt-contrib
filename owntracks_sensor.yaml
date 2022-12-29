@@ -8,7 +8,7 @@
 # If mqtt_templates directory does not exist, simply create it.
 # Copy the files and restart Reactor. Every time you update the files, a restart is needed.
 ---
-version: 22356
+version: 22363
 revision: 1
 format: 1
 
@@ -20,7 +20,8 @@ templates:
     primary_attribute: string_sensor.value
     requires: [topic, prefix, homeRegionName]
     description: Owntracks position
-    contributor_name: Daniele Bochicchio
+    contributor_name: "Daniele Bochicchio <daniele@bochicchio.com>"
+    license: MIT
     contributor_url: https://github.com/dbochicchio/reactor-mqtt-contrib
     events:
       # position updates
@@ -30,9 +31,10 @@ templates:
           json_payload: true
           if_expr: "payload._type == 'location' || payload._type == 'transition'"
           expr:  >
-            payload._type == 'location' ? join( ( payload.inregions ?? [] ), ', ') : 
-            (payload._type == 'transition' && payload.event == 'enter') ? payload.data?.description : 
-            (notHomeRegionName ?? '')
+            desc = payload._type == 'location' ? join( ( payload.inregions ?? [] ), ', ') : 
+                   (payload._type == 'transition' && payload.event == 'enter') ? payload.data?.description : null,
+            desc = desc == '' ? null: desc,
+            desc ?? notHomeRegionName ?? ''
             
         # battery_power for phone battery
         "battery_power.level":
@@ -76,11 +78,26 @@ templates:
           json_payload: true
           if_expr: "payload._type == 'transition' && (payload.event == 'leave' || payload.event == 'enter')"
           expr:  >
-            ( payload.event == 'leave' && lower(payload.data?.description ?? '') != lower(homeRegionName) ) ||
-            ( payload.event == 'enter' && lower(payload.data?.description ?? '') == lower(homeRegionName) )
+            desc = payload.data?.description ?? payload?.desc ?? '',
+            ( payload.event == 'leave' && lower(desc) != lower(homeRegionName) ) ||
+            ( payload.event == 'enter' && lower(desc) == lower(homeRegionName) )
         "string_sensor.value":
           json_payload: true
           if_expr: "payload._type == 'transition'"
           expr:  >
-            (payload._type == 'transition' && payload.event == 'enter') ? payload.data?.description : 
+            desc = payload.data?.description ?? payload?.desc ?? '',
+            (payload._type == 'transition' && payload.event == 'enter') ? desc : 
             (notHomeRegionName ?? '')
+        # location details
+        "location.latitude":
+          json_payload: true
+          if_expr: "!isNaN(payload.lat)"
+          expr: "float(payload.lat)"
+        "location.longitude":
+          json_payload: true
+          if_expr: "!isNaN(payload.lon)"
+          expr: "float(payload.lon)"
+        "location.elevation":
+          json_payload: true
+          if_expr: "!isNaN(payload.alt)"
+          expr: "float(payload.alt)"

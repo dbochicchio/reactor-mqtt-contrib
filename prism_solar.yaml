@@ -8,7 +8,7 @@
 # If mqtt_templates directory does not exist, simply create it.
 # Copy the files and restart Reactor. Every time you update the files, a restart is needed.
 ---
-version: 22356
+version: 22361
 revision: 1
 format: 1
 
@@ -20,7 +20,8 @@ templates:
     primary_attribute: ev_charger.state
     requires: [topic, channel]
     description: "Prism Solar EV Charger device to handle the command and get the current status"
-    contributor_name: Daniele Bochicchio
+    contributor_name: "Daniele Bochicchio <daniele@bochicchio.com>"
+    license: MIT
     contributor_url: https://github.com/dbochicchio/reactor-mqtt-contrib
     events:
       # power_sensor
@@ -52,8 +53,9 @@ templates:
         "ev_charger.state":
           expr:  >
             payload == '1' ? 'not connected' : 
-            payload == '2' ? 'ready' : 
+            payload == '2' || entity.attributes.ev_charger.mode == 3 ? 'ready' : 
             payload == '3' ? 'charging' : 
+            entity.attributes.ev_charger.mode == 7 ? 'limited charging' :
             'suspended'
         "ev_charger.operating_state":
           expr:  >
@@ -63,17 +65,17 @@ templates:
           expr: "payload == '2'"
       "%topic%/%channel%/mode":
         "ev_charger.mode":
-          expr: "payload"
+          expr: "int(payload)"
         "ev_charger.schedule":
           expr:  >
             payload == '1' ? 'solar' : 
             'normal'
       "%topic%/%channel%/error":
         "ev_charger.error":
-          expr: "payload"
+          expr: "int(payload)"
         "ev_charger.state":
           if_expr: "float(payload) != 0"
-          expr: "error"
+          expr: "fault"
           type: "raw"
       "%topic%/%channel%/session_time":
         "ev_charger.duration":
@@ -115,7 +117,8 @@ templates:
     primary_attribute: power_sensor.value
     requires: [topic, channel]
     description: "Prism Solar EV Charger device to handle the charging session"
-    contributor_name: Daniele Bochicchio
+    contributor_name: "Daniele Bochicchio <daniele@bochicchio.com>"
+    license: MIT
     contributor_url: https://github.com/dbochicchio/reactor-mqtt-contrib
     events:
       # power_sensor

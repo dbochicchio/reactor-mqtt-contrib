@@ -20,7 +20,8 @@ templates:
     primary_attribute: power_switch.state
     requires: [topic, channel]
     description: Shelly relay with power meter
-    contributor_name: Daniele Bochicchio
+    contributor_name: "Daniele Bochicchio <daniele@bochicchio.com>"
+    license: MIT
     contributor_url: https://github.com/dbochicchio/reactor-mqtt-contrib
     query:
       topic: "shellies/%topic%/command"

@@ -20,7 +20,8 @@ templates:
     primary_attribute: temperature_sensor.value
     requires: [topic, channel]
     description: Shelly with external temperature sensors
-    contributor_name: Daniele Bochicchio
+    contributor_name: "Daniele Bochicchio <daniele@bochicchio.com>"
+    license: MIT
     contributor_url: https://github.com/dbochicchio/reactor-mqtt-contrib
     query:
       topic: "shellies/%topic%/command"

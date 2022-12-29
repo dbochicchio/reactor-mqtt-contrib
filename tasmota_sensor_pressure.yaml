@@ -22,7 +22,8 @@ templates:
     lwt: "tele/%topic%/LWT"
     query: "cmnd/%topic%/STATE"
     description: Tasmota device with barometric pressure sensor
-    contributor_name: Daniele Bochicchio
+    contributor_name: "Daniele Bochicchio <daniele@bochicchio.com>"
+    license: MIT
     contributor_url: https://github.com/dbochicchio/reactor-mqtt-contrib
     events:
       "tele/%topic%/SENSOR":
