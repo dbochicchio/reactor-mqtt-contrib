@@ -38,6 +38,8 @@ templates:
              payload.event == "SSS" ? "triple" :
              payload.event == "L" ? "long" :
              "unknown"
+        "button.since":
+          expr: "time()"
         "x_mqtt_device.online": true
 
       # battery_power

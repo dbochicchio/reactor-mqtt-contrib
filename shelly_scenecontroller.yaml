@@ -33,6 +33,8 @@ templates:
         "scene_activation.scene_id":
           json_payload: true
           expr: "payload.event"
+        "scene_activation.since":
+          expr: "time()"
 
         "button.state":
           json_payload: true
@@ -42,6 +44,8 @@ templates:
              payload.event == "SSS" ? "triple" :
              payload.event == "L" ? "long" :
              "unknown"
+        "button.since":
+          expr: "time()"
 
         "x_mqtt_device.online": true
 
