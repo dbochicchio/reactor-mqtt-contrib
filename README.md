@@ -24,6 +24,7 @@ Just replace the files using the same mechanism introduced for installation and 
 | shelly_exthumidity | Shelly with external humidity sensor | humidity_sensor | topic, channel |
 | shelly_scenecontroller | Shelly as scene controller | button, scene_activation | topic, channel |
 | shelly_button1 | Shelly Button 1 | button, battery_power, battery_maintenance | topic, channel |
+| shelly_uni_adc | Shelly UNI ADC | value_sensor | topic |
 | tasmota_sensor_pressure | Tasmota with Pressure sensor | value_sensor | topic, source |
 | tasmota_sensor_illuminance | Tasmota with Illuminance sensor | light_sensor | topic, source |
 | switchbot_switch | Switchbot Switch mapped from [switchbot-mqtt](https://github.com/fphammerle/switchbot-mqtt) | power_switch, toggle, battery_power | topic |
@@ -62,12 +63,13 @@ Dual switch devices, such as Shelly 2 or 2.5, should be mapped using separate de
 
 ### Scene controllers
 
-Many devices are also offering scene controller capabilities. Map a new device using *shelly_scenecontroller* as a template. Simply specify *channel* parameters accordingly for multi-buttons devices (Shelly 2.5, i3, etc).
+Many devices are also offering scene controller capabilities. Map a new device using *shelly_scenecontroller* as a template . Simply specify *channel* parameters accordingly for multi-buttons devices (Shelly 2.5, i3, etc).
 
 ### Shelly Uni
 
 Shelly Uni is offering two inputs and two outputs, so you should map it using *shelly_relay_simple* (using *channel* as 0 or 1) and *shelly_binary* (using *channel* as 0 or 1).
 You'll end up with 4 devices, 2 mapping the inputs and 2 mapping the outputs. If you have temperatures/humidity sensors, map a new device using *shelly_exttemperature* or *shelly_exthumidity*, setting the appropriate channels. You'll probably have 4-5 devices mapped, which gives you all the control over what's represented.
+Use *shelly_uni_adc* if you want to get ADC measurements.
 
 ### OwnTracks
 
