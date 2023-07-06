@@ -1,6 +1,6 @@
 # switchbot_switch.yaml
 #
-# Copyright (C) 2022 Daniele Bochicchio, All Rights Reserved
+# Copyright (C) 2022-2023 Daniele Bochicchio, All Rights Reserved
 # For updates see https://github.com/dbochicchio/reactor-mqtt-contrib
 #
 # *** IMPORTANT ***
@@ -8,7 +8,7 @@
 # If mqtt_templates directory does not exist, simply create it.
 # Copy the files and restart Reactor. Every time you update the files, a restart is needed.
 ---
-version: 22363
+version: 23175
 revision: 1
 format: 1
 
@@ -28,11 +28,14 @@ templates:
       "homeassistant/switch/switchbot/%topic%/state":
         "power_switch.state":
           expr: "payload == 'ON'"
+        "x_mqtt_device.online": true
+        
       "homeassistant/switch/switchbot/%topic%/battery-percentage":
         "battery_power.level":
           expr: "float(payload ?? 0)/100"
         "battery_power.since":
           expr: "time()"
+        "x_mqtt_device.online": true
 
       "homeassistant/switchbot-mqtt/status":
         "x_mqtt_device.online":

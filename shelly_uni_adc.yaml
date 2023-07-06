@@ -1,4 +1,4 @@
-# shelly_exttemperature.yaml
+# shelly_exthumidity.yaml
 #
 # Copyright (C) 2022-2023 Daniele Bochicchio, All Rights Reserved
 # For updates see https://github.com/dbochicchio/reactor-mqtt-contrib
@@ -13,13 +13,13 @@ revision: 1
 format: 1
 
 templates:
-  # Shelly with external temp sensor
-  shelly_exttemperature:
+  # Shelly Uni ADC sensor
+  shelly_uni_adc:
     type: ValueSensor
-    capabilities: ["temperature_sensor"]
-    primary_attribute: temperature_sensor.value
+    capabilities: ["string_sensor"]
+    primary_attribute: string_sensor.value
     requires: [topic, channel]
-    description: Shelly with external temperature sensors
+    description: Shelly Uni ADC sensor
     contributor_name: "Daniele Bochicchio <daniele@bochicchio.com>"
     license: MIT
     contributor_url: https://github.com/dbochicchio/reactor-mqtt-contrib
@@ -29,10 +29,9 @@ templates:
       qos: 0
       retain: false
     events:
-      "shellies/%topic%/ext_temperature/%channel%":
-        "temperature_sensor.value":
+      "shellies/%topic%/adc/%channel%":
+        "string_sensor.value":
           expr: "float(payload)"
-        "temperature_sensor.units": "C"
         "x_mqtt_device.online": true
 
       "shellies/%topic%/online":

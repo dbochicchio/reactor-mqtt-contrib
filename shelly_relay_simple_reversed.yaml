@@ -1,4 +1,4 @@
-# shelly_relay_power.yaml
+# shelly_relay_simple_reversed.yaml
 #
 # Copyright (C) 2022-2023 Daniele Bochicchio, All Rights Reserved
 # For updates see https://github.com/dbochicchio/reactor-mqtt-contrib
@@ -13,13 +13,13 @@ revision: 1
 format: 1
 
 templates:
-  # Shelly relay with power meter
-  shelly_relay_power:
+  # Shelly relay (simple template, reversed)
+  shelly_relay_simple_reversed:
     type: Switch
-    capabilities: ["power_switch", "toggle", "power_sensor", "energy_sensor"]
+    capabilities: ["power_switch", "toggle"]
     primary_attribute: power_switch.state
     requires: [topic, channel]
-    description: Shelly relay with power meter
+    description: Shelly relay (reversed)
     contributor_name: "Daniele Bochicchio <daniele@bochicchio.com>"
     license: MIT
     contributor_url: https://github.com/dbochicchio/reactor-mqtt-contrib
@@ -31,22 +31,7 @@ templates:
     events:
       "shellies/%topic%/relay/%channel%":
         "power_switch.state":
-          expr: "payload == 'on'"
-        "power_sensor.value":
-          if_expr: "payload == 'off'"
-          expr: "float(0)"
-        "x_mqtt_device.online": true
-
-      "shellies/%topic%/relay/%channel%/power":
-        "power_sensor.value":
-          expr: "float(payload)"
-        "power_sensor.units": "W"
-        "x_mqtt_device.online": true
-
-      "shellies/%topic%/relay/%channel%/energy":
-        "energy_sensor.value":
-          expr: "round(float(payload) / 0.06, 4)" # value / 60 / 1000
-        "energy_sensor.units": "KWH"
+          expr: "payload != 'on'"
         "x_mqtt_device.online": true
 
       "shellies/%topic%/online":
@@ -57,13 +42,13 @@ templates:
       power_switch:
         "on":
           topic: "shellies/%topic%/relay/%channel%/command"
-          payload: "on"
+          payload: "off"
         "off":
           topic: "shellies/%topic%/relay/%channel%/command"
-          payload: "off"
+          payload: "on"
         set:
           topic: "shellies/%topic%/relay/%channel%/command"
           payload:
-            expr: "parameters.state ? 'on' : 'off'"
+            expr: "parameters.state ? 'off' : 'on'"
             type: raw
       # toggle.toggle is implemented by the default handler in MQTTController

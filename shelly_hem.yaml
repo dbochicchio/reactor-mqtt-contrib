@@ -1,6 +1,6 @@
 # shelly_hem.yaml
 #
-# Copyright (C) 2022 Daniele Bochicchio, All Rights Reserved
+# Copyright (C) 2022-2023 Daniele Bochicchio, All Rights Reserved
 # For updates see https://github.com/dbochicchio/reactor-mqtt-contrib
 #
 # *** IMPORTANT ***
@@ -8,7 +8,7 @@
 # If mqtt_templates directory does not exist, simply create it.
 # Copy the files and restart Reactor. Every time you update the files, a restart is needed.
 ---
-version: 22363
+version: 23175
 revision: 1
 format: 1
 
@@ -37,6 +37,8 @@ templates:
           if_expr: "! isnull(payload) && ! isnull(entity.attributes.voltage_sensor.value)"
           expr: "round(float(payload) / entity.attributes.voltage_sensor.value, 2)"
         "current_sensor.units": "A"
+        "x_mqtt_device.online": true
+
       "shellies/%topic%/emeter/%channel%/voltage":
         "voltage_sensor.value":
           expr: "float(payload)"
@@ -45,17 +47,24 @@ templates:
           if_expr: "! isnull(payload) && ! isnull(entity.attributes.power_sensor.value)"
           expr: "round(entity.attributes.power_sensor.value / float(payload), 2)"
         "current_sensor.units": "A"
+        "x_mqtt_device.online": true
+
       "shellies/%topic%/emeter/%channel%/total":
         "energy_sensor.value":
           expr: "round(float(payload) * 0.001, 4)" # 1 Wh = 0.001 kWh - value * 0.001
         "energy_sensor.units": "KWH"
+        "x_mqtt_device.online": true
+
       "shellies/%topic%/emeter/%channel%/total_returned":
         "x_energy_sensor_exported.value":
           expr: "round(float(payload) * 0.001, 4)" # 1 Wh = 0.001 kWh - value * 0.001
         "x_energy_sensor_exported.units": "KWH"
+        "x_mqtt_device.online": true
+
       "shellies/%topic%/emeter/%channel%/pf":
         "power_factor_sensor.value":
           expr: "float(payload)"
+        "x_mqtt_device.online": true
 
       "shellies/%topic%/online":
         "x_mqtt_device.online":

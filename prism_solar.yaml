@@ -1,6 +1,6 @@
 # prism_solar.yaml
 #
-# Copyright (C) 2022 Daniele Bochicchio, All Rights Reserved
+# Copyright (C) 2022-2023 Daniele Bochicchio, All Rights Reserved
 # For updates see https://github.com/dbochicchio/reactor-mqtt-contrib
 #
 # *** IMPORTANT ***
@@ -8,7 +8,7 @@
 # If mqtt_templates directory does not exist, simply create it.
 # Copy the files and restart Reactor. Every time you update the files, a restart is needed.
 ---
-version: 22363
+version: 23175
 revision: 1
 format: 1
 
@@ -29,24 +29,28 @@ templates:
         "power_sensor.value":
           expr: "float(payload)"
         "power_sensor.units": "W"
+        "x_mqtt_device.online": true
 
       # current_sensor
       "%topic%/%channel%/amp":
         "current_sensor.value":
           expr: "float(payload) / 1000"
         "current_sensor.units": "A"
+        "x_mqtt_device.online": true
 
       # voltage_sensor
       "%topic%/%channel%/volt":
         "voltage_sensor.value":
           expr: "float(payload)"
         "voltage_sensor.units": "V"
+        "x_mqtt_device.online": true
 
       # energy_sensor
       "%topic%/%channel%/wh_total":
         "energy_sensor.value":
           expr: "round(float(payload) * 0.001, 4)" # 1 Wh = 0.001 kWh - value * 0.001
         "energy_sensor.units": "KWH"
+        "x_mqtt_device.online": true
 
       # ev_charger
       "%topic%/%channel%/state":
@@ -63,6 +67,8 @@ templates:
             'standby'
         "power_switch.state":
           expr: "payload == '2'"
+        "x_mqtt_device.online": true
+
       "%topic%/%channel%/mode":
         "ev_charger.mode":
           expr: "int(payload)"
@@ -70,6 +76,8 @@ templates:
           expr:  >
             payload == '1' ? 'solar' : 
             'normal'
+        "x_mqtt_device.online": true
+
       "%topic%/%channel%/error":
         "ev_charger.error":
           expr: "int(payload)"
@@ -77,10 +85,13 @@ templates:
           if_expr: "float(payload) != 0"
           expr: "fault"
           type: "raw"
+        "x_mqtt_device.online": true
+
       "%topic%/%channel%/session_time":
         "ev_charger.duration":
           expr: "int(payload) * 1000" # from sec to millisecs
-
+        "x_mqtt_device.online": true
+        
     actions:
       power_switch:
         "on":
@@ -126,15 +137,18 @@ templates:
         "power_sensor.value":
           expr: "float(payload)"
         "power_sensor.units": "W"
+        "x_mqtt_device.online": true
 
       # energy_sensor
       "%topic%/%channel%/wh":
         "energy_sensor.value":
           expr: "round(float(payload) * 0.001, 4)" # 1 Wh = 0.001 kWh - value * 0.001
         "energy_sensor.units": "KWH"
+        "x_mqtt_device.online": true
 
       # current_sensor
       "%topic%/%channel%/user_amp":
         "current_sensor.value":
           expr: "float(payload)"
         "current_sensor.units": "A"
+        "x_mqtt_device.online": true

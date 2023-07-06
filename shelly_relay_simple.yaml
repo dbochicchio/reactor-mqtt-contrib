@@ -1,4 +1,4 @@
-# shelly_exttemperature.yaml
+# shelly_relay_power.yaml
 #
 # Copyright (C) 2022-2023 Daniele Bochicchio, All Rights Reserved
 # For updates see https://github.com/dbochicchio/reactor-mqtt-contrib
@@ -13,13 +13,13 @@ revision: 1
 format: 1
 
 templates:
-  # Shelly with external temp sensor
-  shelly_exttemperature:
-    type: ValueSensor
-    capabilities: ["temperature_sensor"]
-    primary_attribute: temperature_sensor.value
+  # Shelly relay (simple template)
+  shelly_relay_simple:
+    type: Switch
+    capabilities: ["power_switch", "toggle"]
+    primary_attribute: power_switch.state
     requires: [topic, channel]
-    description: Shelly with external temperature sensors
+    description: Shelly relay
     contributor_name: "Daniele Bochicchio <daniele@bochicchio.com>"
     license: MIT
     contributor_url: https://github.com/dbochicchio/reactor-mqtt-contrib
@@ -29,12 +29,26 @@ templates:
       qos: 0
       retain: false
     events:
-      "shellies/%topic%/ext_temperature/%channel%":
-        "temperature_sensor.value":
-          expr: "float(payload)"
-        "temperature_sensor.units": "C"
+      "shellies/%topic%/relay/%channel%":
+        "power_switch.state":
+          expr: "payload == 'on'"
         "x_mqtt_device.online": true
 
       "shellies/%topic%/online":
         "x_mqtt_device.online":
           expr: 'bool(payload)'
+          
+    actions:
+      power_switch:
+        "on":
+          topic: "shellies/%topic%/relay/%channel%/command"
+          payload: "on"
+        "off":
+          topic: "shellies/%topic%/relay/%channel%/command"
+          payload: "off"
+        set:
+          topic: "shellies/%topic%/relay/%channel%/command"
+          payload:
+            expr: "parameters.state ? 'on' : 'off'"
+            type: raw
+      # toggle.toggle is implemented by the default handler in MQTTController

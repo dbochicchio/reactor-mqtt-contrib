@@ -1,4 +1,4 @@
-# shelly_exttemperature.yaml
+# shelly_scenecontroller.yaml
 #
 # Copyright (C) 2022-2023 Daniele Bochicchio, All Rights Reserved
 # For updates see https://github.com/dbochicchio/reactor-mqtt-contrib
@@ -13,13 +13,13 @@ revision: 1
 format: 1
 
 templates:
-  # Shelly with external temp sensor
-  shelly_exttemperature:
-    type: ValueSensor
-    capabilities: ["temperature_sensor"]
-    primary_attribute: temperature_sensor.value
+  # Shelly as scene controller
+  shelly_scenecontroller:
+    type: Button
+    capabilities: ["scene_activation", "button"]
+    primary_attribute: button.state
     requires: [topic, channel]
-    description: Shelly with external temperature sensors
+    description: Shelly relay with power meter
     contributor_name: "Daniele Bochicchio <daniele@bochicchio.com>"
     license: MIT
     contributor_url: https://github.com/dbochicchio/reactor-mqtt-contrib
@@ -29,10 +29,20 @@ templates:
       qos: 0
       retain: false
     events:
-      "shellies/%topic%/ext_temperature/%channel%":
-        "temperature_sensor.value":
-          expr: "float(payload)"
-        "temperature_sensor.units": "C"
+      "shellies/%topic%/input_event/%channel%":
+        "scene_activation.scene_id":
+          json_payload: true
+          expr: "payload.event"
+
+        "button.state":
+          json_payload: true
+          expr: >
+             payload.event == "S" ? "single" :
+             payload.event == "SS" ? "double" :
+             payload.event == "SSS" ? "triple" :
+             payload.event == "L" ? "long" :
+             "unknown"
+
         "x_mqtt_device.online": true
 
       "shellies/%topic%/online":

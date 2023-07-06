@@ -1,6 +1,6 @@
 # shelly_button1.yaml
 #
-# Copyright (C) 2022 Daniele Bochicchio, All Rights Reserved
+# Copyright (C) 2022-2023 Daniele Bochicchio, All Rights Reserved
 # For updates see https://github.com/dbochicchio/reactor-mqtt-contrib
 #
 # *** IMPORTANT ***
@@ -8,7 +8,7 @@
 # If mqtt_templates directory does not exist, simply create it.
 # Copy the files and restart Reactor. Every time you update the files, a restart is needed.
 ---
-version: 22363
+version: 23175
 revision: 1
 format: 1
 
@@ -38,11 +38,14 @@ templates:
              payload.event == "SSS" ? "triple" :
              payload.event == "L" ? "long" :
              "unknown"
+        "x_mqtt_device.online": true
 
       # battery_power
       "shellies/%topic%/sensor/battery":
         "battery_power.level":
           expr: "float(payload)/100"
+        "x_mqtt_device.online": true
+
       # battery_maintenance
       "shellies/%topic%/sensor/charger":
         "battery_maintenance.charging":
@@ -51,6 +54,7 @@ templates:
           expr: "false"
         "battery_maintenance.rechargeable":
           expr: "true"
+        "x_mqtt_device.online": true
 
       "shellies/%topic%/online":
         "x_mqtt_device.online":

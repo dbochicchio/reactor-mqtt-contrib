@@ -17,10 +17,12 @@ Just replace the files using the same mechanism introduced for installation and 
 | Template ID | Device | Capabilities | Parameters |
 | ------------- | ------------- | ------------- | ------------- |
 | shelly_hem | Shelly Home Energy Meter | power_sensor, energy_sensor, voltage_sensor, current_sensor, power_factor_sensor, x_energy_sensor_exported | topic, channel |
+| shelly_relay_simple | Shelly relay (simple version) | switch, toggle | topic, channel |
 | shelly_relay_power | Shelly relay with power meter | switch, toggle, power_sensor, energy_sensor, voltage_sensor, current_sensor, power_factor_sensor | topic, channel |
 | shelly_binary | Shelly with detached inputs, mapped as binary sensor | binary_sensor | topic, channel |
 | shelly_exttemperature | Shelly with detached inputs, mapped as binary sensor | binary_sensor | topic, channel |
 | shelly_exthumidity | Shelly with external humidity sensor | humidity_sensor | topic, channel |
+| shelly_scenecontroller | Shelly as scene controller | button, scene_activation | topic, channel |
 | shelly_button1 | Shelly Button 1 | button, battery_power, battery_maintenance | topic, channel |
 | tasmota_sensor_pressure | Tasmota with Pressure sensor | value_sensor | topic, source |
 | tasmota_sensor_illuminance | Tasmota with Illuminance sensor | light_sensor | topic, source |
@@ -58,10 +60,14 @@ Look at the table above for other parameters.
 
 Dual switch devices, such as Shelly 2 or 2.5, should be mapped using separate device for each channel. Simply specify *channel* parameters accordingly.
 
+### Scene controllers
+
+Many devices are also offering scene controller capabilities. Map a new device using *shelly_scenecontroller* as a template. Simply specify *channel* parameters accordingly for multi-buttons devices (Shelly 2.5, i3, etc).
+
 ### Shelly Uni
 
-Shelly Uni is offering two inputs and two outputs, so you should map it using *shelly_relay* (using *channel* as 0 or 1) and *shelly_binary* (using *channel* as 0 or 1).
-You'll end up with 4 devices, 2 mapping the inputs and 2 mapping the outputs.
+Shelly Uni is offering two inputs and two outputs, so you should map it using *shelly_relay_simple* (using *channel* as 0 or 1) and *shelly_binary* (using *channel* as 0 or 1).
+You'll end up with 4 devices, 2 mapping the inputs and 2 mapping the outputs. If you have temperatures/humidity sensors, map a new device using *shelly_exttemperature* or *shelly_exthumidity*, setting the appropriate channels. You'll probably have 4-5 devices mapped, which gives you all the control over what's represented.
 
 ### OwnTracks
 
@@ -117,14 +123,15 @@ To fully support this EV Charger, you'll need to map two devices:
 The first device will implement the charger and its commands. The second one will show the information (power, current and energy) for the current charging session.
 *channel* is usually 1, unless you have a Prism Solar Duo. In this case, you'll need to map multiple devices using *prism_solar_charger* as base template.
 Neither poll nor LWT are supported by Prism Solar.
-Night mode is not supported by MQTT messages, but it's easily achievable with Reactor capabilities.
+Even if night mode is supported via MQTT messages, it's better to create something with Reactor capabilities, because it has a cumbersome structure and it's mostly cloud-driven.
 
 ### Fully Kiosk
 
-The device is mapping binary sensor (for screen turned on/off), dimming (for screen brigthness), battery level and charging status (plugged-in, battery power), and string_sensor that's showing the current app. Unfortunately, Fully Kiosk only supports commands via HTTP and thus a virtual device is needed to send commands.
+The device is mapping binary sensor (for screen turned on/off), dimming (for screen brigthness), battery level and charging status (plugged-in, battery power), and a *string_sensor* capability that's showing the current app. Unfortunately, Fully Kiosk only supports commands via HTTP and thus a virtual device is needed to send commands.
 
 # Changelog
 
+*23175*: New logic to get online status, with each update.
 *22363*: Fixes for *prism_solar*; *owntracks_sensor* now fully supports *notHomeRegionName*, better handling of region transitions.
 
 # Support

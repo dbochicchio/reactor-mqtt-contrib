@@ -1,0 +1,60 @@
+# espresense_sensor.yaml
+#
+# Copyright (C) 2022-2023 Daniele Bochicchio, All Rights Reserved
+# For updates see https://github.com/dbochicchio/reactor-mqtt-contrib
+#
+# *** IMPORTANT ***
+# Just copy this file under reactor/config/mqtt_templates. 
+# If mqtt_templates directory does not exist, simply create it.
+# Copy the files and restart Reactor. Every time you update the files, a restart is needed.
+---
+version: 23175
+revision: 1
+format: 1
+requires_version: 22363
+
+templates:
+  # ESPresense binary device
+  espresense_sensor:
+    type: BinarySensor
+    capabilities: ["presence_sensor", "string_sensor", "x_espresense"]
+    primary_attribute: presence_sensor.state
+    requires: [deviceid]
+    description: ESPresense sensor mapped as binary sensor
+    contributor_name: "Daniele Bochicchio <daniele@bochicchio.com>"
+    license: MIT
+    contributor_url: https://github.com/dbochicchio/reactor-mqtt-contrib
+    #query:
+    #  topic: "espresense/rooms/%room%/status"
+    #  payload: "update"
+    #  qos: 0
+    #  retain: false
+    events:
+      "espresense/devices/%deviceid%/#":
+        "presence_sensor.state":
+          json_payload: true
+          expr: "float(payload.rssi) >= (rssiForHome??-100)"
+        "string_sensor.value":
+          json_payload: true
+          expr: >
+            float(payload.rssi) >= (rssiForHome??-100)? slice( split(topic, '/'), -1 )[0] : 'not_home'
+        "x_espresense.rssi":
+          json_payload: true
+          expr: "float(payload.rssi)"
+        "x_espresense.raw":
+          json_payload: true
+          expr: "float(payload.raw)"
+        "x_espresense.distance":
+          json_payload: true
+          expr: "float(payload.distance)"
+        "x_espresense.speed":
+          json_payload: true
+          expr: "float(payload.speed)"
+        "x_espresense.interval":
+          json_payload: true
+          expr: "float(payload.speed)"
+        "x_mqtt_device.online": true
+        
+      # "espresense/rooms/%room%/status":
+      #   "x_mqtt_device.online":
+      #     expr: "payload == 'online'"

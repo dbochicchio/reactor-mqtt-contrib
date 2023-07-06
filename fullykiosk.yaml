@@ -1,6 +1,6 @@
 # fullykiosk.yaml
 #
-# Copyright (C) 2022 Daniele Bochicchio, All Rights Reserved
+# Copyright (C) 2022-2023 Daniele Bochicchio, All Rights Reserved
 # For updates see https://github.com/dbochicchio/reactor-mqtt-contrib
 #
 # *** IMPORTANT ***
@@ -8,7 +8,7 @@
 # If mqtt_templates directory does not exist, simply create it.
 # Copy the files and restart Reactor. Every time you update the files, a restart is needed.
 ---
-version: 22363
+version: 23175
 revision: 1
 format: 1
 
@@ -64,6 +64,8 @@ templates:
           if_expr: "!isNaN(payload.screenBrightness)"
           expr: "int(payload.screenBrightness) / 255"
 
+        "x_mqtt_device.online": true
+
         # lwt
         # "x_mqtt_device.online":
         #   json_payload: true
@@ -76,6 +78,7 @@ templates:
           json_payload: true
           if_expr: "!isNaN(payload.level)"
           expr: "float(payload.level)/100"
+        "x_mqtt_device.online": true
 
       # binary sensor for screen status
       "fully/event/onScreensaverStart/%topic%":
@@ -83,9 +86,12 @@ templates:
           expr:  "bool(false)"
         "dimming.level":
           expr:  "int(0)"
+        "x_mqtt_device.online": true
+
       "fully/event/onScreensaverStop/%topic%":
         "binary_sensor.state":
           expr:  "bool(true)"
+        "x_mqtt_device.online": true
 
       # battery_maintenance to get charging status
       "fully/event/unplugged/%topic%":
