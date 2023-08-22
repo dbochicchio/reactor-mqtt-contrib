@@ -133,6 +133,7 @@ The device is mapping binary sensor (for screen turned on/off), dimming (for scr
 
 # Changelog
 
+*23234*: Shelly's Temperature and Humidity sensors report *999* as value if the value is null. Added a filter to prevent incorrect readings.
 *23175*: New logic to get online status, with each update.
 *22363*: Fixes for *prism_solar*; *owntracks_sensor* now fully supports *notHomeRegionName*, better handling of region transitions.
 
