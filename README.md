@@ -10,7 +10,7 @@ You could also just download all this repo, and copy the ZIP file in the same di
 
 # How to update
 
-Just replace the files using the same mechanism introduced for installation and restart Reactor.
+Just replace the files you're previously downloaded using the same mechanism introduced for installation, and restart Reactor.
 
 # Templates
 
@@ -18,6 +18,7 @@ Just replace the files using the same mechanism introduced for installation and 
 | ------------- | ------------- | ------------- | ------------- |
 | shelly_hem | Shelly Home Energy Meter | power_sensor, energy_sensor, voltage_sensor, current_sensor, power_factor_sensor, x_energy_sensor_exported | topic, channel |
 | shelly_relay_simple | Shelly relay (simple version) | switch, toggle | topic, channel |
+| shelly_relay_simple_reversed | Shelly relay with reversed status (simple version) | switch, toggle | topic, channel |
 | shelly_relay_power | Shelly relay with power meter | switch, toggle, power_sensor, energy_sensor, voltage_sensor, current_sensor, power_factor_sensor | topic, channel |
 | shelly_binary | Shelly with detached inputs, mapped as binary sensor | binary_sensor | topic, channel |
 | shelly_exttemperature | Shelly with detached inputs, mapped as binary sensor | binary_sensor | topic, channel |
@@ -129,11 +130,17 @@ Even if night mode is supported via MQTT messages, it's better to create somethi
 
 ### Fully Kiosk
 
-The device is mapping binary sensor (for screen turned on/off), dimming (for screen brigthness), battery level and charging status (plugged-in, battery power), and a *string_sensor* capability that's showing the current app. Unfortunately, Fully Kiosk only supports commands via HTTP and thus a virtual device is needed to send commands.
+The device has support for these capabilities:
+ - binary sensor (for screen turned on/off)
+ - dimming (for screen brigthness)
+ - battery level and charging status (plugged-in, battery power)
+ - string_sensor (to show the current app)
+ 
+ Unfortunately, Fully Kiosk  supports commands only via HTTP and thus a virtual device is needed to send commands.
 
 # Changelog
 
-*23234*: Shelly's Temperature and Humidity sensors report *999* as value if the value is null. Added a filter to prevent incorrect readings.
+*23234*: Shelly's Temperature and Humidity sensors report *999* as value if the value is null. Added a filter to prevent incorrect readings. Added support for *shelly_relay_simple_reversed* and *shelly_uni_adc*.
 *23175*: New logic to get online status, with each update.
 *22363*: Fixes for *prism_solar*; *owntracks_sensor* now fully supports *notHomeRegionName*, better handling of region transitions.
 
