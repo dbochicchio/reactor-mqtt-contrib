@@ -1,6 +1,6 @@
 # shelly_relay_simple_reversed.yaml
 #
-# Copyright (C) 2022-2023 Daniele Bochicchio, All Rights Reserved
+# Copyright (C) 2022-2024 Daniele Bochicchio, All Rights Reserved
 # For updates see https://github.com/dbochicchio/reactor-mqtt-contrib
 #
 # *** IMPORTANT ***
@@ -11,12 +11,13 @@
 version: 23234
 revision: 1
 format: 1
+requires: 24108
 
 templates:
   # Shelly relay (simple template, reversed)
   shelly_relay_simple_reversed:
     type: Switch
-    capabilities: ["power_switch", "toggle"]
+    capabilities: ["power_switch", "toggle", "wifi_status"]
     primary_attribute: power_switch.state
     requires: [topic, channel]
     description: Shelly relay (reversed)
@@ -37,7 +38,18 @@ templates:
       "shellies/%topic%/online":
         "x_mqtt_device.online":
           expr: 'bool(payload)'
-          
+
+      "shellies/%topic%/info":
+        "wifi_status.rssi":
+          json_payload: true
+          expr: "payload.wifi_sta.rssi"
+        "wifi_status.ssid":
+          json_payload: true
+          expr: "payload.wifi_sta.ssid"
+        "wifi_status.station_ip":
+          json_payload: true
+          expr: "payload.wifi_sta.ip"
+
     actions:
       power_switch:
         "on":
@@ -46,7 +58,7 @@ templates:
         "off":
           topic: "shellies/%topic%/relay/%channel%/command"
           payload: "on"
-        set:
+        "set":
           topic: "shellies/%topic%/relay/%channel%/command"
           payload:
             expr: "parameters.state ? 'off' : 'on'"

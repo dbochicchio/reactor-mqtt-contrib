@@ -8,9 +8,10 @@
 # If mqtt_templates directory does not exist, simply create it.
 # Copy the files and restart Reactor. Every time you update the files, a restart is needed.
 ---
-version: 23175
+version: 24111
 revision: 1
 format: 1
+requires: 24108
 
 templates:
   # Owntracks adavanced templates
@@ -67,7 +68,7 @@ templates:
         # lwt
         "x_mqtt_device.online":
           json_payload: true
-          # TODO: check if this is consistent. every message will update online status
+          # IMPRV: check if this is consistent. every message will update online status
           if_expr: "payload._type == 'lwt'"
           expr: "payload.tst < time()/1000"
 

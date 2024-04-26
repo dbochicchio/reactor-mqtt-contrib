@@ -1,6 +1,6 @@
 # fullykiosk.yaml
 #
-# Copyright (C) 2022-2023 Daniele Bochicchio, All Rights Reserved
+# Copyright (C) 2022-2024 Daniele Bochicchio, All Rights Reserved
 # For updates see https://github.com/dbochicchio/reactor-mqtt-contrib
 #
 # *** IMPORTANT ***
@@ -8,9 +8,10 @@
 # If mqtt_templates directory does not exist, simply create it.
 # Copy the files and restart Reactor. Every time you update the files, a restart is needed.
 ---
-version: 23175
+version: 24111
 revision: 1
 format: 1
+requires: 24108
 
 templates:
   # fullykiosk
@@ -71,6 +72,16 @@ templates:
         #   json_payload: true
         #   if_expr: "payload._type == 'lwt'"
         #   expr: "payload.tst < time()/1000"
+
+        "wifi_status.rssi":
+          json_payload: true
+          expr: 'wifiSignalLevel'
+        "wifi_status.ssid":
+          json_payload: true
+          expr: 'SSID'
+        "wifi_status.station_ip":
+          json_payload: true
+          expr: "ip4"
 
       # battery level
       "fully/event/onbatterylevelchanged/%topic%":

@@ -16,20 +16,23 @@ Just replace the files you're previously downloaded using the same mechanism int
 
 | Template ID | Device | Capabilities | Parameters |
 | ------------- | ------------- | ------------- | ------------- |
-| shelly_hem | Shelly Home Energy Meter | power_sensor, energy_sensor, voltage_sensor, current_sensor, power_factor_sensor, x_energy_sensor_exported | topic, channel |
-| shelly_relay_simple | Shelly relay (simple version) | switch, toggle | topic, channel |
-| shelly_relay_simple_reversed | Shelly relay with reversed status (simple version) | switch, toggle | topic, channel |
-| shelly_relay_power | Shelly relay with power meter | switch, toggle, power_sensor, energy_sensor, voltage_sensor, current_sensor, power_factor_sensor | topic, channel |
-| shelly_binary | Shelly with detached inputs, mapped as binary sensor | binary_sensor | topic, channel |
-| shelly_exttemperature | Shelly with detached inputs, mapped as binary sensor | binary_sensor | topic, channel |
-| shelly_exthumidity | Shelly with external humidity sensor | humidity_sensor | topic, channel |
-| shelly_scenecontroller | Shelly as scene controller | button, scene_activation | topic, channel |
-| shelly_button1 | Shelly Button 1 | button, battery_power, battery_maintenance | topic, channel |
-| shelly_uni_adc | Shelly UNI ADC | value_sensor | topic |
-| tasmota_sensor_pressure | Tasmota with Pressure sensor | value_sensor | topic, source |
-| tasmota_sensor_illuminance | Tasmota with Illuminance sensor | light_sensor | topic, source |
+| shelly_hem | Shelly Home Energy Meter (Shelly EM, Shelly 3EM) | power_sensor, energy_sensor, voltage_sensor, current_sensor, power_factor_sensor, x_energy_sensor_exported, wifi_status | topic, channel |
+| shelly_relay_simple | Shelly relay (simple version) | switch, toggle, wifi_status | topic, channel |
+| shelly_relay_simple_reversed | Shelly relay with reversed status (simple version) | switch, toggle, wifi_status | topic, channel |
+| shelly_relay_power | Shelly relay with power meter | switch, toggle, power_sensor, energy_sensor, voltage_sensor, current_sensor, power_factor_sensor, wifi_status | topic, channel |
+| shelly_binary | Shelly with detached inputs, mapped as binary sensor, wifi_status | binary_sensor | topic, channel |
+| shelly_cover | Shelly 2.5 in cover mode | cover, position, power_switch, toggle, power_sensor, energy_sensor, wifi_status | topic |
+| shelly_dimmer | Shelly dimmer | dimming, power_switch, toggle, power_sensor, energy_sensor, wifi_status | topic, channel |
+| shelly_exttemperature | Shelly with detached inputs, mapped as binary sensor | binary_sensor, wifi_status | topic, channel |
+| shelly_exthumidity | Shelly with external humidity sensor | humidity_sensor, wifi_status | topic, channel |
+| shelly_scenecontroller | Shelly as scene controller | button, scene_activation, wifi_status | topic, channel |
+| shelly_button1 | Shelly Button 1 | button, battery_power, battery_maintenance, wifi_status | topic, channel |
+| shelly_dw2 | Shelly Door/Window 2 | door_sensor, light_sensor, tilt_sensor, motion_sensor, battery_power, wifi_status | topic |
+| shelly_uni_adc | Shelly UNI ADC | value_sensor, wifi_status | topic |
+| tasmota_sensor_pressure | Tasmota with Pressure sensor | value_sensor, wifi_status | topic, source |
+| tasmota_sensor_illuminance | Tasmota with Illuminance sensor | light_sensor, wifi_status | topic, source |
 | switchbot_switch | Switchbot Switch mapped from [switchbot-mqtt](https://github.com/fphammerle/switchbot-mqtt) | power_switch, toggle, battery_power | topic |
-| fullykiosk | [Fully Kiosk](https://www.fully-kiosk.com/). See additional configuration for info. | string_sensor, binary_sensor, battery_power, battery_maintenance, dimming | topic |
+| fullykiosk | [Fully Kiosk](https://www.fully-kiosk.com/). See additional configuration for info. | string_sensor, binary_sensor, battery_power, battery_maintenance, dimming, wifi_status | topic |
 | owntracks_sensor | OwnTracks Sensor with multiple informations (position, current region, device battery). See additional configuration for info. | string_sensor, binary_sensor, battery_power, battery_maintenance, location | prefix, topic, homeRegionName, notHomeRegionName |
 | prism_solar_charger,  prism_solar_session | Prism Solar EV Charger from [Silla Industries](https://silla.industries/en/docs/prism/prism-use-and-maintenance/). See additional configuration for info. | ev_charger, power_switch, toggle, power_sensor, energy_sensor, voltage_sensor, current_sensor | topic, channel |
 
@@ -140,8 +143,9 @@ The device has support for these capabilities:
 
 # Changelog
 
+ - *24111*: requires MQTTController v 24108. Bug fixing, support for *wifi_status*.
  - *23234*: Shelly's Temperature and Humidity sensors report *999* as value if the value is null. Added a filter to prevent incorrect readings. Added support for *shelly_relay_simple_reversed* and *shelly_uni_adc*.
- - *23175*: New logic to get online status, with each update.
+ - *24002*: New logic to get online status, with each update.
  - *22363*: Fixes for *prism_solar*; *owntracks_sensor* now fully supports *notHomeRegionName*, better handling of region transitions.
 
 # Support

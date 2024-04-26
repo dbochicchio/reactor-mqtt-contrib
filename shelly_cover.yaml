@@ -1,4 +1,4 @@
-# shelly_relay_power.yaml
+# shelly_cover.yaml
 #
 # Copyright (C) 2022-2024 Daniele Bochicchio, All Rights Reserved
 # For updates see https://github.com/dbochicchio/reactor-mqtt-contrib
@@ -8,19 +8,19 @@
 # If mqtt_templates directory does not exist, simply create it.
 # Copy the files and restart Reactor. Every time you update the files, a restart is needed.
 ---
-version: 24111
+version: 23234
 revision: 1
 format: 1
 requires: 24108
 
 templates:
-  # Shelly relay with power meter
-  shelly_relay_power:
+  # Shelly cover
+  shelly_cover:
     type: Switch
-    capabilities: ["power_switch", "toggle", "power_sensor", "energy_sensor", "wifi_status"]
+    capabilities: ["power_switch", "toggle", "cover", "position", "power_sensor", "energy_sensor", "wifi_status"]
     primary_attribute: power_switch.state
-    requires: [topic, channel]
-    description: Shelly relay with power meter
+    requires: [topic]
+    description: Shelly relay
     contributor_name: "Daniele Bochicchio <daniele@bochicchio.com>"
     license: MIT
     contributor_url: https://github.com/dbochicchio/reactor-mqtt-contrib
@@ -30,21 +30,29 @@ templates:
       qos: 0
       retain: false
     events:
-      "shellies/%topic%/relay/%channel%":
+      "shellies/%topic%/roller/0":
         "power_switch.state":
-          expr: "payload == 'on'"
-        "power_sensor.value":
-          if_expr: "payload == 'off'"
-          expr: "float(0)"
+          expr: "payload == 'open'"
+        "cover.state":
+          expr: "payload == 'open'"
+        "position.value":
+          expr: "payload == 'open'? 1 : 0"
+          if_expr: "payload != 'stop'"
         "x_mqtt_device.online": true
 
-      "shellies/%topic%/relay/%channel%/power":
+      "shellies/%topic%/roller/0/pos":
+        "position.value":
+          expr: "float(payload) / 100"
+          if_expr: "payload != '-1'"
+        "x_mqtt_device.online": true
+
+      "shellies/%topic%/roller/0/power":
         "power_sensor.value":
           expr: "float(payload)"
         "power_sensor.units": "W"
         "x_mqtt_device.online": true
 
-      "shellies/%topic%/relay/%channel%/energy":
+      "shellies/%topic%/roller/0/energy":
         "energy_sensor.value":
           expr: "round(float(payload) / 0.06, 4)" # value / 60 / 1000
         "energy_sensor.units": "KWH"
@@ -68,14 +76,32 @@ templates:
     actions:
       power_switch:
         "on":
-          topic: "shellies/%topic%/relay/%channel%/command"
-          payload: "on"
+          topic: "shellies/%topic%/roller/0/command"
+          payload: "open"
         "off":
-          topic: "shellies/%topic%/relay/%channel%/command"
-          payload: "off"
+          topic: "shellies/%topic%/roller/0/command"
+          payload: "close"
         "set":
-          topic: "shellies/%topic%/relay/%channel%/command"
+          topic: "shellies/%topic%/roller/0/command"
           payload:
-            expr: "parameters.state ? 'on' : 'off'"
+            expr: "parameters.state ? 'open' : 'close'"
             type: raw
       # toggle.toggle is implemented by the default handler in MQTTController
+
+      position:
+        "set":
+          topic: "shellies/%topic%/roller/0/command/pos"
+          payload:
+            expr: "float(parameters.value) * 100"
+            type: raw
+
+      cover:
+        "open":
+          topic: "shellies/%topic%/roller/0/command"
+          payload: "open"
+        "close":
+          topic: "shellies/%topic%/roller/0/command"
+          payload: "close"
+        "stop":
+          topic: "shellies/%topic%/roller/0/command"
+          payload: "stop"

@@ -1,6 +1,6 @@
 # switchbot_switch.yaml
 #
-# Copyright (C) 2022-2023 Daniele Bochicchio, All Rights Reserved
+# Copyright (C) 2022-2024 Daniele Bochicchio, All Rights Reserved
 # For updates see https://github.com/dbochicchio/reactor-mqtt-contrib
 #
 # *** IMPORTANT ***
@@ -8,15 +8,16 @@
 # If mqtt_templates directory does not exist, simply create it.
 # Copy the files and restart Reactor. Every time you update the files, a restart is needed.
 ---
-version: 23175
+version: 24111
 revision: 1
 format: 1
+requires: 24108
 
 templates:
   # Switchbot mapped from https://github.com/fphammerle/switchbot-mqtt
   switchbot_switch:
     type: Switch
-    capabilities: ["power_switch", "toggle", "battery_power"]
+    capabilities: ["power_switch", "toggle", "battery_power", "wifi_status"]
     primary_attribute: power_switch.state
     requires: [topic]
     description: Switchbot switch mapped via switchbot-mqtt
@@ -48,7 +49,7 @@ templates:
         "off":
           topic: "homeassistant/switch/switchbot/%topic%/set"
           payload: "OFF"
-        set:
+        "set":
           topic: "homeassistant/switch/switchbot/%topic%/set"
           payload:
             expr: "parameters.state ? 'ON' : 'OFF'"

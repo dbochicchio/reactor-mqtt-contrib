@@ -1,4 +1,4 @@
-# shelly_relay_power.yaml
+# shelly_dimmer.yaml
 #
 # Copyright (C) 2022-2024 Daniele Bochicchio, All Rights Reserved
 # For updates see https://github.com/dbochicchio/reactor-mqtt-contrib
@@ -14,13 +14,13 @@ format: 1
 requires: 24108
 
 templates:
-  # Shelly relay with power meter
-  shelly_relay_power:
+  # Shelly dimmer
+  shelly_dimmer:
     type: Switch
-    capabilities: ["power_switch", "toggle", "power_sensor", "energy_sensor", "wifi_status"]
+    capabilities: ["power_switch", "toggle", "dimming", "power_sensor", "energy_sensor", "wifi_status"]
     primary_attribute: power_switch.state
     requires: [topic, channel]
-    description: Shelly relay with power meter
+    description: Shelly dimmer
     contributor_name: "Daniele Bochicchio <daniele@bochicchio.com>"
     license: MIT
     contributor_url: https://github.com/dbochicchio/reactor-mqtt-contrib
@@ -30,21 +30,22 @@ templates:
       qos: 0
       retain: false
     events:
-      "shellies/%topic%/relay/%channel%":
+      "shellies/%topic%/light/%channel%/status":
         "power_switch.state":
-          expr: "payload == 'on'"
-        "power_sensor.value":
-          if_expr: "payload == 'off'"
-          expr: "float(0)"
+          json_payload: true
+          expr: "bool(payload.ison)"
+        "dimming.level":
+          json_payload: true
+          expr: "round(float(payload.brightness) / 100, 0)" 
         "x_mqtt_device.online": true
 
-      "shellies/%topic%/relay/%channel%/power":
+      "shellies/%topic%/light/%channel%/power":
         "power_sensor.value":
           expr: "float(payload)"
         "power_sensor.units": "W"
         "x_mqtt_device.online": true
 
-      "shellies/%topic%/relay/%channel%/energy":
+      "shellies/%topic%/light/%channel%/energy":
         "energy_sensor.value":
           expr: "round(float(payload) / 0.06, 4)" # value / 60 / 1000
         "energy_sensor.units": "KWH"
@@ -68,14 +69,26 @@ templates:
     actions:
       power_switch:
         "on":
-          topic: "shellies/%topic%/relay/%channel%/command"
-          payload: "on"
+          topic: "shellies/%topic%/relay/%channel%/set"
+          payload:
+            expr: '{turn: "on"}'
+            type: json
         "off":
-          topic: "shellies/%topic%/relay/%channel%/command"
-          payload: "off"
+          topic: "shellies/%topic%/relay/%channel%/set"
+          payload:
+            expr: '{turn: "off"}'
+            type: json
         "set":
           topic: "shellies/%topic%/relay/%channel%/command"
           payload:
-            expr: "parameters.state ? 'on' : 'off'"
-            type: raw
+            expr: '{turn: parameters.state ? "on" : "off"}'
+            type: json
+
+      dimming:
+        "set":
+          topic: "shellies/%topic%/relay/%channel%/set"
+          payload:
+            expr: '{turn: "on", brightness: round(parameters.level * 100, 0) }'
+            type: json
+
       # toggle.toggle is implemented by the default handler in MQTTController

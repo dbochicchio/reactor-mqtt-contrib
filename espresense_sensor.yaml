@@ -1,6 +1,6 @@
 # espresense_sensor.yaml
 #
-# Copyright (C) 2022-2023 Daniele Bochicchio, All Rights Reserved
+# Copyright (C) 2022-2024 Daniele Bochicchio, All Rights Reserved
 # For updates see https://github.com/dbochicchio/reactor-mqtt-contrib
 #
 # *** IMPORTANT ***
@@ -8,10 +8,10 @@
 # If mqtt_templates directory does not exist, simply create it.
 # Copy the files and restart Reactor. Every time you update the files, a restart is needed.
 ---
-version: 23175
+version: 24111
 revision: 1
 format: 1
-requires_version: 22363
+requires: 24108
 
 templates:
   # ESPresense binary device
@@ -58,3 +58,14 @@ templates:
       # "espresense/rooms/%room%/status":
       #   "x_mqtt_device.online":
       #     expr: "payload == 'online'"
+
+      "espresense/devices/%deviceid%/telemetry":
+        "wifi_status.rssi":
+          json_payload: true
+          expr: 'payload?.rssi'
+        "wifi_status.ssid":
+          json_payload: true
+          expr: 'payload?.Wifi?.SSId'
+        "wifi_status.station_ip":
+          json_payload: true
+          expr: "payload?.ip"

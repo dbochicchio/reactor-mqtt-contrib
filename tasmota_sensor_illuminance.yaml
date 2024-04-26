@@ -1,6 +1,6 @@
 # tasmota_sensor_illuminance.yaml
 #
-# Copyright (C) 2022-2023 Daniele Bochicchio, All Rights Reserved
+# Copyright (C) 2022-2024 Daniele Bochicchio, All Rights Reserved
 # For updates see https://github.com/dbochicchio/reactor-mqtt-contrib
 #
 # *** IMPORTANT ***
@@ -8,15 +8,16 @@
 # If mqtt_templates directory does not exist, simply create it.
 # Copy the files and restart Reactor. Every time you update the files, a restart is needed.
 ---
-version: 23175
+version: 24111
 revision: 1
 format: 1
+requires: 24108
 
 templates:
   # tasmota with illuminance
   tasmota_sensor_illuminance:
     type: ValueSensor
-    capabilities: [light_sensor]
+    capabilities: ["light_sensor", "wifi_status"]
     primary_attribute: light_sensor.value
     requires: [topic, source]
     lwt: "tele/%topic%/LWT"
@@ -41,3 +42,19 @@ templates:
           if_expr: "! isnull( payload?[ source ?? 'Global' ] )"
           expr: "payload[ source ?? 'Global' ]?.Broadband"
         "x_mqtt_device.online": true
+
+      "tele/%topic%/STATE":
+        "wifi_status.rssi":
+          json_payload: true
+          expr: 'payload?.Wifi?.RSSI'
+        "wifi_status.ssid":
+          json_payload: true
+          expr: 'payload?.Wifi?.SSId'
+        "wifi_status.station_ip":
+          json_payload: true
+          expr: "payload?.Wifi?.ip"
+
+      "tasmota/discovery/%topic%/config":
+        "wifi_status.station_ip":
+          json_payload: true
+          expr: "payload?.ip"
