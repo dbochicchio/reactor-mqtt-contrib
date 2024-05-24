@@ -1,4 +1,4 @@
-# shelly_relay_simple.yaml
+# shelly_plus_relay_simple.yaml
 #
 # Copyright (C) 2022-2024 Daniele Bochicchio, All Rights Reserved
 # For updates see https://github.com/dbochicchio/reactor-mqtt-contrib
@@ -15,7 +15,7 @@ requires: 24144
 
 templates:
   # Shelly relay (simple template)
-  shelly_relay_simple:
+  shelly_plus_relay_simple:
     type: Switch
     capabilities: ["power_switch", "toggle", "wifi_status"]
     primary_attribute: power_switch.state
@@ -26,11 +26,11 @@ templates:
     contributor_url: https://github.com/dbochicchio/reactor-mqtt-contrib
     query:
       topic: "shellies/%topic%/command"
-      payload: "update"
+      payload: "status_update"
       qos: 0
       retain: false
     events:
-      "shellies/%topic%/relay/%channel%":
+      "shellies/%topic%/status/switch:%channel%":
         "power_switch.state":
           expr: "payload == 'on'"
         "x_mqtt_device.online": true
@@ -39,27 +39,27 @@ templates:
         "x_mqtt_device.online":
           expr: 'bool(payload)'
 
-      "shellies/%topic%/info":
+      "shellies/%topic%/rpc":
         "wifi_status.rssi":
           json_payload: true
-          expr: "payload.wifi_sta.rssi"
+          expr: "payload.wifi.rssi"
         "wifi_status.ssid":
           json_payload: true
-          expr: "payload.wifi_sta.ssid"
+          expr: "payload.wifi.ssid"
         "wifi_status.station_ip":
           json_payload: true
-          expr: "payload.wifi_sta.ip"
+          expr: "payload.wifi.sta_ip"
             
     actions:
       power_switch:
         "on":
-          topic: "shellies/%topic%/relay/%channel%/command"
+          topic: "shellies/%topic%/command/switch:%channel%"
           payload: "on"
         "off":
-          topic: "shellies/%topic%/relay/%channel%/command"
+          topic: "shellies/%topic%/command/switch:%channel%"
           payload: "off"
         "set":
-          topic: "shellies/%topic%/relay/%channel%/command"
+          topic: "shellies/%topic%/command/switch:%channel%"
           payload:
             expr: "parameters.state ? 'on' : 'off'"
             type: raw

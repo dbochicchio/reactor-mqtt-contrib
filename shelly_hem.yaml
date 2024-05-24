@@ -8,10 +8,10 @@
 # If mqtt_templates directory does not exist, simply create it.
 # Copy the files and restart Reactor. Every time you update the files, a restart is needed.
 ---
-version: 24111
+version: 24144
 revision: 1
 format: 1
-requires: 24108
+requires: 24144
 
 templates:
   # Shelly HEM
@@ -81,3 +81,11 @@ templates:
         "wifi_status.station_ip":
           json_payload: true
           expr: "payload.wifi_sta.ip"
+
+capabilities:
+  x_energy_sensor_exported:
+    attributes:
+      value:
+        type: real
+      units:
+        type: string

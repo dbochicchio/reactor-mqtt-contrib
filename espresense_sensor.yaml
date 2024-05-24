@@ -8,10 +8,10 @@
 # If mqtt_templates directory does not exist, simply create it.
 # Copy the files and restart Reactor. Every time you update the files, a restart is needed.
 ---
-version: 24111
+version: 24144
 revision: 1
 format: 1
-requires: 24108
+requires: 24144
 
 templates:
   # ESPresense binary device
@@ -38,7 +38,7 @@ templates:
           json_payload: true
           expr: >
             float(payload.rssi) >= (rssiForHome??-100)? slice( split(topic, '/'), -1 )[0] : 'not_home'
-        "x_espresense.rssi":
+        "x_espresense.rssi":  # deprecated
           json_payload: true
           expr: "float(payload.rssi)"
         "x_espresense.raw":
@@ -52,7 +52,7 @@ templates:
           expr: "float(payload.speed)"
         "x_espresense.interval":
           json_payload: true
-          expr: "float(payload.speed)"
+          expr: "float(payload.interval)"
         "x_mqtt_device.online": true
         
       # "espresense/rooms/%room%/status":
@@ -69,3 +69,17 @@ templates:
         "wifi_status.station_ip":
           json_payload: true
           expr: "payload?.ip"
+
+capabilities:
+  x_espresense:
+    attributes:
+      rssi:
+        type: real
+      raw:
+        type: real
+      distance:
+        type: real
+      speed:
+        type: real
+      interval:
+        type: real

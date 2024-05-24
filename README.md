@@ -143,6 +143,7 @@ The device has support for these capabilities:
 
 # Changelog
 
+ - *24144*: added support for MQTTController 24144.
  - *24111*: requires MQTTController v 24108. Bug fixing, support for *wifi_status*.
  - *23234*: Shelly's Temperature and Humidity sensors report *999* as value if the value is null. Added a filter to prevent incorrect readings. Added support for *shelly_relay_simple_reversed* and *shelly_uni_adc*.
  - *24002*: New logic to get online status, with each update.
