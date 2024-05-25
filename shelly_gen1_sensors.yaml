@@ -1,0 +1,137 @@
+# shelly_gen1_sensors.yaml
+#
+# Copyright (C) 2022-2024 Daniele Bochicchio, All Rights Reserved
+# For updates see https://github.com/dbochicchio/reactor-mqtt-contrib
+#
+# *** IMPORTANT ***
+# Just copy this file under reactor/config/mqtt_templates. 
+# If mqtt_templates directory does not exist, simply create it.
+# Copy the files and restart Reactor. Every time you update the files, a restart is needed.
+---
+version:  24146
+revision: 1
+format: 1
+requires: 24144
+
+templates:
+  # Shelly Door/Window Sensor 2
+  shelly_dw2:
+    type: BinarySensor
+    capabilities: ["door_sensor", "light_sensor", "tilt_sensor", "motion_sensor", "battery_power", "wifi_status"]
+    primary_attribute: door_sensor.state
+    requires: [topic]
+    description: Shelly Door/Window Sensor 2
+    contributor_name: "Daniele Bochicchio <daniele@bochicchio.com>"
+    license: MIT
+    contributor_url: https://github.com/dbochicchio/reactor-mqtt-contrib
+    include:
+      - shelly_online_gen1
+      - shelly_battery_gen1
+    query:
+      topic: "shellies/%topic%/command"
+      payload: "update"
+      qos: 0
+      retain: false
+    events:
+      "shellies/%topic%/sensor/state":
+        "door_sensor.state":
+          expr: "float(payload) == 1"
+        "x_mqtt_device.online": true
+
+      "shellies/%topic%/sensor/lux":
+        "light_sensor.value":
+          expr: "float(payload)"
+        "light_sensor.units": "lux"
+        "x_mqtt_device.online": true
+
+      # tilt as a binary sensor
+      "shellies/%topic%/sensor/tilt":
+        "tilt_sensor.state":
+          expr: "float(payload) > 0"
+        "x_mqtt_device.online": true
+
+      # vibration as motion_sensor
+      "shellies/%topic%/sensor/vibration":
+        "motion_sensor.state":
+          expr: "float(payload) == 1"
+        "x_mqtt_device.online": true
+
+      # battery_power
+      "shellies/%topic%/sensor/battery":
+        "x_mqtt_device.online": true
+
+  # Shelly with external temp sensor
+  shelly_exttemperature:
+    type: ValueSensor
+    capabilities: ["temperature_sensor", "wifi_status"]
+    primary_attribute: temperature_sensor.value
+    requires: [topic, channel]
+    description: Shelly with external temperature sensors
+    contributor_name: "Daniele Bochicchio <daniele@bochicchio.com>"
+    license: MIT
+    contributor_url: https://github.com/dbochicchio/reactor-mqtt-contrib
+    include:
+      - shelly_online_gen1
+    events:
+      "shellies/%topic%/ext_temperature/%channel%":
+        "temperature_sensor.value":
+          expr: "float(payload)"
+          if_expr: 'payload != "999"'
+        "temperature_sensor.units": "C"
+        "x_mqtt_device.online": true
+
+  # Shelly with external humidity sensor
+  shelly_exthumidity:
+    type: ValueSensor
+    capabilities: ["humidity_sensor", "wifi_status"]
+    primary_attribute: humidity_sensor.value
+    requires: [topic, channel]
+    description: Shelly with external humidity sensors
+    contributor_name: "Daniele Bochicchio <daniele@bochicchio.com>"
+    license: MIT
+    contributor_url: https://github.com/dbochicchio/reactor-mqtt-contrib
+    include:
+      - shelly_online_gen1
+    events:
+      "shellies/%topic%/ext_humidity/%channel%":
+        "humidity_sensor.value":
+          expr: "float(payload)"
+          if_expr: 'payload != "999"'
+        "humidity_sensor.units": "%"
+        "x_mqtt_device.online": true
+
+  # Shelly with binary input
+  shelly_binary:
+    type: BinarySensor
+    capabilities: ["binary_sensor", "wifi_status"]
+    primary_attribute: binary_sensor.state
+    requires: [topic, channel]
+    description: Shelly with detached inputs, mapped as binary sensor
+    contributor_name: "Daniele Bochicchio <daniele@bochicchio.com>"
+    license: MIT
+    contributor_url: https://github.com/dbochicchio/reactor-mqtt-contrib
+    include:
+      - shelly_online_gen1
+    events:
+      "shellies/%topic%/input/%channel%":
+        "binary_sensor.state":
+          expr: "float(payload) == 1"
+        "x_mqtt_device.online": true
+
+  # Shelly Uni ADC sensor
+  shelly_uni_adc:
+    type: ValueSensor
+    capabilities: ["value_sensor", "wifi_status"]
+    primary_attribute: value_sensor.value
+    requires: [topic]
+    description: Shelly Uni ADC sensor
+    contributor_name: "Daniele Bochicchio <daniele@bochicchio.com>"
+    license: MIT
+    contributor_url: https://github.com/dbochicchio/reactor-mqtt-contrib
+    include:
+      - shelly_online_gen1
+    events:
+      "shellies/%topic%/adc/%channel%":
+        "value_sensor.value":
+          expr: "float(payload)"
+        "x_mqtt_device.online": true

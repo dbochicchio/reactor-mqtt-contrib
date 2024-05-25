@@ -1,0 +1,78 @@
+# shelly_plus_relay_simple.yaml
+#
+# Copyright (C) 2022-2024 Daniele Bochicchio, All Rights Reserved
+# For updates see https://github.com/dbochicchio/reactor-mqtt-contrib
+#
+# *** IMPORTANT ***
+# Just copy this file under reactor/config/mqtt_templates. 
+# If mqtt_templates directory does not exist, simply create it.
+# Copy the files and restart Reactor. Every time you update the files, a restart is needed.
+---
+version:  24146
+revision: 1
+format: 1
+requires: 24144
+
+templates:
+  # Shelly online template
+  shelly_online_gen3:
+    capabilities: ["x_mqtt_device"]
+    description: Shelly Gen3 Online status
+    contributor_name: "Daniele Bochicchio <daniele@bochicchio.com>"
+    license: MIT
+    contributor_url: https://github.com/dbochicchio/reactor-mqtt-contrib
+    include:
+      - shelly_wifi_gen3
+    events:
+      "%topic%/online":
+        "x_mqtt_device.online":
+          expr: 'bool(payload)'
+
+  # Shelly relay (simple template)
+  shelly_relay_gen3:
+    type: Switch
+    capabilities: ["power_switch", "toggle", "wifi_status"]
+    primary_attribute: power_switch.state
+    requires: [topic, channel]
+    description: Shelly Gen3 relay
+    contributor_name: "Daniele Bochicchio <daniele@bochicchio.com>"
+    license: MIT
+    contributor_url: https://github.com/dbochicchio/reactor-mqtt-contrib
+    lwt: "%topic%/online"
+    query:
+      topic: "%topic%/command"
+      payload: "status_update"
+    include:
+      - shelly_online_gen3
+    events:
+      # command-based events
+      "%topic%/status":
+        "power_switch.state":
+          json_payload: true
+          if_expr: "payload?['switch:' + channel] !== null"
+          expr: "bool( payload?['switch:' + channel]?.output )"
+        "x_mqtt_device.online": true
+
+      # RPC-based events
+      # {"src":"shellyplus1-cc7b5c87baa0","dst":"shellies/shelly-sprinklers-terrace/events","method":"NotifyStatus","params":{"ts":1716622594.36,"switch:0":{"id":0,"output":true,"source":"http","timer_duration":300.00,"timer_started_at":1716622594.37}}}
+      "%topic%/events/rpc":
+        "power_switch.state":
+          json_payload: true
+          if_expr: "(payload.method==='NotifyStatus' || payload.method==='NotifyFullStatus') && payload?.params?['switch:' + str(channel)]?.output !== null"
+          expr: "bool( payload.params['switch:' + str(channel)].output )"
+        "x_mqtt_device.online": true
+
+    actions:
+      power_switch:
+        "on":
+          topic: "%topic%/command/switch:%channel%"
+          payload: "on"
+        "off":
+          topic: "%topic%/command/switch:%channel%"
+          payload: "off"
+        "set":
+          topic: "%topic%/command/switch:%channel%"
+          payload:
+            expr: "parameters.state ? 'on' : 'off'"
+            type: raw
+      # toggle.toggle is implemented by the default handler in MQTTController

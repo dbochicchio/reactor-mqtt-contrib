@@ -1,0 +1,96 @@
+# tasmota_sensors.yaml
+#
+# Copyright (C) 2022-2024 Daniele Bochicchio, All Rights Reserved
+# For updates see https://github.com/dbochicchio/reactor-mqtt-contrib
+#
+# *** IMPORTANT ***
+# Just copy this file under reactor/config/mqtt_templates. 
+# If mqtt_templates directory does not exist, simply create it.
+# Copy the files and restart Reactor. Every time you update the files, a restart is needed.
+---
+version:  24146
+revision: 1
+format: 1
+requires: 24144
+
+templates:
+  tasmota_wifi:
+    type: ValueSensor
+    capabilities: ["wifi_status"]
+    requires: [topic, source]
+    description: Tasmota Wifi Template - do not
+    contributor_name: "Daniele Bochicchio <daniele@bochicchio.com>"
+    license: MIT
+    contributor_url: https://github.com/dbochicchio/reactor-mqtt-contrib
+    lwt: "tele/%topic%/LWT"
+    query: "cmnd/%topic%/STATE"
+    events:
+      "tele/%topic%/STATE":
+        "wifi_status.rssi":
+          json_payload: true
+          expr: 'payload?.Wifi?.RSSI'
+        "wifi_status.ssid":
+          json_payload: true
+          expr: 'payload?.Wifi?.SSId'
+        "wifi_status.station_ip":
+          json_payload: true
+          expr: "payload?.Wifi?.ip"
+
+      "tasmota/discovery/%topic%/config":
+        "wifi_status.station_ip":
+          json_payload: true
+          expr: "payload?.ip"
+
+  # tasmota with pressure sensor
+  tasmota_sensor_pressure:
+    type: ValueSensor
+    capabilities: ["value_sensor", "wifi_status"]
+    primary_attribute: value_sensor.value
+    requires: [topic, source]
+    description: Tasmota device with barometric pressure sensor
+    contributor_name: "Daniele Bochicchio <daniele@bochicchio.com>"
+    license: MIT
+    contributor_url: https://github.com/dbochicchio/reactor-mqtt-contrib
+    include:
+      - tasmota_wifi
+    events:
+      "tele/%topic%/SENSOR":
+        "value_sensor.value":
+          json_payload: true
+          if_expr: "! isnull( payload?[ source ?? 'Global' ] )"
+          expr: "payload[ source ?? 'Global' ]?.Pressure"
+        "value_sensor.units":
+          json_payload: true
+          if_expr: "! isnull( payload?.PressureUnit )"
+          expr: payload.PressureUnit
+        "x_mqtt_device.online": true
+
+
+  # tasmota with illuminance
+  tasmota_sensor_illuminance:
+    type: ValueSensor
+    capabilities: ["light_sensor", "wifi_status"]
+    primary_attribute: light_sensor.value
+    requires: [topic, source]
+    description: Tasmota device with illuminance sensor
+    contributor_name: "Daniele Bochicchio <daniele@bochicchio.com>"
+    license: MIT
+    contributor_url: https://github.com/dbochicchio/reactor-mqtt-contrib
+    include:
+      - tasmota_wifi
+    events:
+      "tele/%topic%/SENSOR":
+        "light_sensor.value":
+          json_payload: true
+          if_expr: "! isnull( payload?[ source ?? 'Global' ] )"
+          expr: "payload[ source ?? 'Global' ]?.Illuminance"
+        "light_sensor.units": "lux"
+        "x_mqtt_tasmota_ir.value":
+          json_payload: true
+          if_expr: "! isnull( payload?[ source ?? 'Global' ] )"
+          expr: "payload[ source ?? 'Global' ]?.IR"
+        "x_mqtt_tasmota_broadband.value":
+          json_payload: true
+          if_expr: "! isnull( payload?[ source ?? 'Global' ] )"
+          expr: "payload[ source ?? 'Global' ]?.Broadband"
+        "x_mqtt_device.online": true

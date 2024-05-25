@@ -4,15 +4,21 @@ This repo contains additional MQTT templates for Reactor.
 
 # Installation
 
-Download all the yaml files and save them under *reactor/config/mqtt_templates*. If *mqtt_templates* directory does not exist, simply create it.
-Copy the files and restart Reactor. Every time you update the files, a restart is needed.
-You could also just download all this repo, and copy the ZIP file in the same directory, instead of single files.
+Download all the yaml files, zip them  (the name of the zip files doesn't matter) and save the zip file under *reactor/config/mqtt_templates*. If *mqtt_templates* directory does not exist, simply create it. If you prefer to have them in a directory, create it and place the zip files there. Reactor will search for templates in any zip or yaml file under the aforementioned location.
+After copying the files, restart Reactor. Every time you update the files, a restart is needed.
 
 # How to update
 
-Just replace the files you're previously downloaded using the same mechanism introduced for installation, and restart Reactor.
+If updating from a previous version, delete all the files. To update, follow the installation procedure again.
 
 # Templates
+
+All the templates support *query*/*init* commands, and at startup their state will be updated again. *x_mqtt.poll* action could be used to poll specific devices in reactions.
+*wifi_status* capability is supported where the information is provided.
+
+## Shelly Gen1
+
+Shelly Gen1 templates are mature and most of the device types are supported.
 
 | Template ID | Device | Capabilities | Parameters |
 | ------------- | ------------- | ------------- | ------------- |
@@ -29,14 +35,28 @@ Just replace the files you're previously downloaded using the same mechanism int
 | shelly_button1 | Shelly Button 1 | button, battery_power, battery_maintenance, wifi_status | topic, channel |
 | shelly_dw2 | Shelly Door/Window 2 | door_sensor, light_sensor, tilt_sensor, motion_sensor, battery_power, wifi_status | topic |
 | shelly_uni_adc | Shelly UNI ADC | value_sensor, wifi_status | topic |
+
+## Shelly Gen3
+
+Shelly Gen3 templates are work in progress. I don't have many of them at the moment.
+
+| Template ID | Device | Capabilities | Parameters |
+| ------------- | ------------- | ------------- | ------------- |
+| shelly_relay_gen3 | Shelly relay (simple version) | switch, toggle, wifi_status | topic, channel |
+
+## Tasmota
+
+| Template ID | Device | Capabilities | Parameters |
+| ------------- | ------------- | ------------- | ------------- |
 | tasmota_sensor_pressure | Tasmota with Pressure sensor | value_sensor, wifi_status | topic, source |
 | tasmota_sensor_illuminance | Tasmota with Illuminance sensor | light_sensor, wifi_status | topic, source |
+
+## Others
+
 | switchbot_switch | Switchbot Switch mapped from [switchbot-mqtt](https://github.com/fphammerle/switchbot-mqtt) | power_switch, toggle, battery_power | topic |
 | fullykiosk | [Fully Kiosk](https://www.fully-kiosk.com/). See additional configuration for info. | string_sensor, binary_sensor, battery_power, battery_maintenance, dimming, wifi_status | topic |
 | owntracks_sensor | OwnTracks Sensor with multiple informations (position, current region, device battery). See additional configuration for info. | string_sensor, binary_sensor, battery_power, battery_maintenance, location | prefix, topic, homeRegionName, notHomeRegionName |
 | prism_solar_charger,  prism_solar_session | Prism Solar EV Charger from [Silla Industries](https://silla.industries/en/docs/prism/prism-use-and-maintenance/). See additional configuration for info. | ev_charger, power_switch, toggle, power_sensor, energy_sensor, voltage_sensor, current_sensor | topic, channel |
-
-All the templates are supporting query/init, and at startup their state will be updated. *x_mqtt.poll* could be used to poll specific devices in reaction.
 
 # Configuration
 
@@ -67,7 +87,7 @@ Dual switch devices, such as Shelly 2 or 2.5, should be mapped using separate de
 
 ### Scene controllers
 
-Many devices are also offering scene controller capabilities. Map a new device using *shelly_scenecontroller* as a template . Simply specify *channel* parameters accordingly for multi-buttons devices (Shelly 2.5, i3, etc).
+Many devices are also offering scene controller capabilities. Map a new device using *shelly_scenecontroller* as a template. Simply specify *channel* parameters accordingly for multi-buttons devices (Shelly 2.5, i3, etc).
 
 ### Shelly Uni
 
@@ -141,8 +161,13 @@ The device has support for these capabilities:
  
  Unfortunately, Fully Kiosk  supports commands only via HTTP and thus a virtual device is needed to send commands.
 
+# Contribute
+
+If you have MQTT payloads for Shelly Gen3 and want them covered, just use the same procedure as outlined in *Support* to ask for a template.
+
 # Changelog
 
+ - *24146*: New feature for MQTTController 24144, refactoring.
  - *24144*: added support for MQTTController 24144.
  - *24111*: requires MQTTController v 24108. Bug fixing, support for *wifi_status*.
  - *23234*: Shelly's Temperature and Humidity sensors report *999* as value if the value is null. Added a filter to prevent incorrect readings. Added support for *shelly_relay_simple_reversed* and *shelly_uni_adc*.
