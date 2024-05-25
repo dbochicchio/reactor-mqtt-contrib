@@ -169,9 +169,9 @@ If you have MQTT payloads for Shelly Gen3 and want them covered, just use the sa
 
 # Changelog
 
- - *24146*: New feature for MQTTController 24144, refactoring.
- - *24144*: added support for MQTTController 24144.
- - *24111*: requires MQTTController v 24108. Bug fixing, support for *wifi_status*.
+ - *24146*: New features for MQTTController 24144, refactoring.
+ - *24144*: Added support for MQTTController 24144.
+ - *24111*: Requires MQTTController v 24108. Bug fixing, support for *wifi_status*.
  - *23234*: Shelly's Temperature and Humidity sensors report *999* as value if the value is null. Added a filter to prevent incorrect readings. Added support for *shelly_relay_simple_reversed* and *shelly_uni_adc*.
  - *24002*: New logic to get online status, with each update.
  - *22363*: Fixes for *prism_solar*; *owntracks_sensor* now fully supports *notHomeRegionName*, better handling of region transitions.
