@@ -53,6 +53,8 @@ Shelly Gen3 templates are work in progress. I don't have many of them at the mom
 
 ## Others
 
+| Template ID | Device | Capabilities | Parameters |
+| ------------- | ------------- | ------------- | ------------- |
 | switchbot_switch | Switchbot Switch mapped from [switchbot-mqtt](https://github.com/fphammerle/switchbot-mqtt) | power_switch, toggle, battery_power | topic |
 | fullykiosk | [Fully Kiosk](https://www.fully-kiosk.com/). See additional configuration for info. | string_sensor, binary_sensor, battery_power, battery_maintenance, dimming, wifi_status | topic |
 | owntracks_sensor | OwnTracks Sensor with multiple informations (position, current region, device battery). See additional configuration for info. | string_sensor, binary_sensor, battery_power, battery_maintenance, location | prefix, topic, homeRegionName, notHomeRegionName |
