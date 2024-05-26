@@ -31,7 +31,7 @@ Shelly Gen1 templates are mature and most of the device types are supported.
 | shelly_dimmer | Shelly dimmer | dimming, power_switch, toggle, power_sensor, energy_sensor, wifi_status | topic, channel |
 | shelly_exttemperature | Shelly with detached inputs, mapped as binary sensor | binary_sensor, wifi_status | topic, channel |
 | shelly_exthumidity | Shelly with external humidity sensor | humidity_sensor, wifi_status | topic, channel |
-| shelly_scenecontroller | Shelly as scene controller | button, scene_activation, wifi_status | topic, channel |
+| shelly_scenecontroller | Shelly as scene controller. Use with detached inputs or to handle single, double, triple clicks or long push. | button, scene_activation, wifi_status | topic, channel |
 | shelly_button1 | Shelly Button 1 | button, battery_power, battery_maintenance, wifi_status | topic, channel |
 | shelly_dw2 | Shelly Door/Window 2 | door_sensor, light_sensor, tilt_sensor, motion_sensor, battery_power, wifi_status | topic |
 | shelly_uni_adc | Shelly UNI ADC | value_sensor, wifi_status | topic |
@@ -169,6 +169,7 @@ If you have MQTT payloads for Shelly Gen3 and want them covered, just use the sa
 
 # Changelog
 
+ - *24147*: just a couple of fix post 24146.
  - *24146*: New features for MQTTController 24144, refactoring.
  - *24144*: Added support for MQTTController 24144.
  - *24111*: Requires MQTTController v 24108. Bug fixing, support for *wifi_status*.

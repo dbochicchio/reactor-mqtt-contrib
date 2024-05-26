@@ -8,7 +8,7 @@
 # If mqtt_templates directory does not exist, simply create it.
 # Copy the files and restart Reactor. Every time you update the files, a restart is needed.
 ---
-version:  24146
+version:  24147
 revision: 1
 format: 1
 requires: 24144
@@ -42,6 +42,9 @@ templates:
           json_payload: true
           if_expr: "!isNaN(payload.batt)"
           expr: "float(payload.batt)/100"
+        "battery_power.since":
+          expr: "time()"
+
         # battery_maintenance for phone battery
         "battery_maintenance.charging":
           json_payload: true
@@ -49,6 +52,7 @@ templates:
           expr: "float(payload.bs) != 1"
         "battery_maintenance.replace":
           expr: "false"
+
         # BinarySensor for home
         "binary_sensor.state":
           json_payload: true

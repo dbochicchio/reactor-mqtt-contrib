@@ -8,7 +8,7 @@
 # If mqtt_templates directory does not exist, simply create it.
 # Copy the files and restart Reactor. Every time you update the files, a restart is needed.
 ---
-version:  24146
+version:  24147
 revision: 1
 format: 1
 requires: 24144
@@ -17,12 +17,13 @@ templates:
   # Shelly online template
   shelly_online_gen3:
     capabilities: ["x_mqtt_device"]
+    requires: [topic]
     description: Shelly Gen3 Online status
     contributor_name: "Daniele Bochicchio <daniele@bochicchio.com>"
     license: MIT
     contributor_url: https://github.com/dbochicchio/reactor-mqtt-contrib
     include:
-      - shelly_wifi_gen3
+      - shelly_wifi_gen3 # from MQTTController
     events:
       "%topic%/online":
         "x_mqtt_device.online":
@@ -46,11 +47,11 @@ templates:
       - shelly_online_gen3
     events:
       # command-based events
-      "%topic%/status":
+      "%topic%/status/":
         "power_switch.state":
           json_payload: true
-          if_expr: "payload?['switch:' + channel] !== null"
-          expr: "bool( payload?['switch:' + channel]?.output )"
+          if_expr: "payload?['switch:' + str(channel)] !== null"
+          expr: "bool( payload?['switch:' + str(channel)]?.output )"
         "x_mqtt_device.online": true
 
       # RPC-based events
