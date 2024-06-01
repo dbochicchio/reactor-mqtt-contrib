@@ -1,24 +1,25 @@
 # reactor-mqtt-contrib
 
-This repo contains additional MQTT templates for Reactor.
+This repository contains additional MQTT templates for Reactor.
 
 # Installation
 
-Download the zip file from the releases and save it file under *reactor/config/mqtt_templates*. If *mqtt_templates* directory does not exist, simply create it. If you prefer to have them in a directory, just create it and unzip the files there. Reactor will search for templates in any zip or yaml file under the aforementioned location.
-After copying the files, restart Reactor. Every time you update the files, a restart is needed.
+1. Download the ZIP file from the releases.
+2. Save it under *reactor/config/mqtt_templates*. If the *mqtt_templates* directory does not exist, create it.
+3. If you prefer to have them in a directory, create one and unzip the files there. Reactor will search for templates in any ZIP or YAML file in this location.
+4. After copying the files, restart Reactor. A restart is required each time you update the files.
 
-# How to update
+# How to Update
 
-If updating from a previous version, delete all the files. To update, follow the installation procedure again.
+To update from a previous version, delete all existing files. Then, follow the installation procedure again.
 
 # Templates
 
-All the templates support *query*/*init* commands, and at startup their state will be updated again. *x_mqtt.poll* action could be used to poll specific devices in reactions.
-*wifi_status* capability is supported where the information is provided.
+All templates support *query*/*init* commands, and their state will be updated at startup. The *x_mqtt.poll* action can be used to poll specific devices in reactions. The *wifi_status* capability is supported where information is provided.
 
 ## Shelly Gen1
 
-Shelly Gen1 templates are mature and most of the device types are supported.
+Shelly Gen1 templates are mature, and most device types are supported.
 
 | Template ID | Device | Capabilities | Parameters |
 | ------------- | ------------- | ------------- | ------------- |
@@ -31,14 +32,14 @@ Shelly Gen1 templates are mature and most of the device types are supported.
 | shelly_dimmer | Shelly dimmer | dimming, power_switch, toggle, power_sensor, energy_sensor, wifi_status | topic, channel |
 | shelly_exttemperature | Shelly with detached inputs, mapped as binary sensor | binary_sensor, wifi_status | topic, channel |
 | shelly_exthumidity | Shelly with external humidity sensor | humidity_sensor, wifi_status | topic, channel |
-| shelly_scenecontroller | Shelly as scene controller. Use with detached inputs or to handle single, double, triple clicks or long push. | button, scene_activation, wifi_status | topic, channel |
+| shelly_scenecontroller | Shelly as scene controller, use with detached inputs or to handle single, double, triple clicks, or long push | button, scene_activation, wifi_status | topic, channel |
 | shelly_button1 | Shelly Button 1 | button, battery_power, battery_maintenance, wifi_status | topic, channel |
 | shelly_dw2 | Shelly Door/Window 2 | door_sensor, light_sensor, tilt_sensor, motion_sensor, battery_power, wifi_status | topic |
 | shelly_uni_adc | Shelly UNI ADC | value_sensor, wifi_status | topic |
 
 ## Shelly Gen3
 
-Shelly Gen3 templates are work in progress. I don't have many of them at the moment.
+Shelly Gen3 templates are a work in progress. I currently have only a few of them.
 
 | Template ID | Device | Capabilities | Parameters |
 | ------------- | ------------- | ------------- | ------------- |
@@ -48,21 +49,22 @@ Shelly Gen3 templates are work in progress. I don't have many of them at the mom
 
 | Template ID | Device | Capabilities | Parameters |
 | ------------- | ------------- | ------------- | ------------- |
-| tasmota_sensor_pressure | Tasmota with Pressure sensor | value_sensor, wifi_status | topic, source |
-| tasmota_sensor_illuminance | Tasmota with Illuminance sensor | light_sensor, wifi_status | topic, source |
+| tasmota_sensor_pressure | Tasmota with pressure sensor | value_sensor, wifi_status | topic, source |
+| tasmota_sensor_illuminance | Tasmota with illuminance sensor | light_sensor, wifi_status | topic, source |
 
 ## Others
 
 | Template ID | Device | Capabilities | Parameters |
 | ------------- | ------------- | ------------- | ------------- |
 | fullykiosk | [Fully Kiosk](https://www.fully-kiosk.com/). See additional configuration for info. | string_sensor, binary_sensor, battery_power, battery_maintenance, dimming, wifi_status | topic |
-| owntracks_sensor | OwnTracks Sensor with multiple informations (position, current region, device battery). See additional configuration for info. | string_sensor, binary_sensor, battery_power, battery_maintenance, location | prefix, topic, homeRegionName, notHomeRegionName |
-| prism_solar_charger,  prism_solar_session | Prism Solar EV Charger from [Silla Industries](https://silla.industries/en/docs/prism/prism-use-and-maintenance/). See additional configuration for info. | ev_charger, power_switch, toggle, power_sensor, energy_sensor, voltage_sensor, current_sensor | topic, channel |
+| owntracks_sensor | OwnTracks Sensor with multiple information (position, current region, device battery). See additional configuration for info. | string_sensor, binary_sensor, battery_power, battery_maintenance, location | prefix, topic, homeRegionName, notHomeRegionName |
+| prism_solar_charger, prism_solar_session | Prism Solar EV Charger from [Silla Industries](https://silla.industries/en/docs/prism/prism-use-and-maintenance/). See additional configuration for info. | ev_charger, power_switch, toggle, power_sensor, energy_sensor, voltage_sensor, current_sensor | topic, channel |
 
 # Configuration
 
-Let's say you want to map a Shelly HEM. In your *reactor.yaml*, under *controllers:*, search for *mqtt*, then *config* and add:
-```
+Let's say you want to map a Shelly HEM. In your *reactor.yaml*, under *controllers:*, search for *mqtt*, then *config*, and add:
+
+```yaml
   - id: mqtt
     name: MQTT
     ...
@@ -77,40 +79,35 @@ Let's say you want to map a Shelly HEM. In your *reactor.yaml*, under *controlle
           channel: 0    
 ```
 
-Where *shelly-solar* is the device name (configured in your Shelly as the MQTT topic) and channel is the index (Shelly HEM supports 2 clamps).
-Look at the table above for other parameters.
+Where *shelly-solar* is the device name (configured in your Shelly as the MQTT topic) and *channel* is the index (Shelly HEM supports 2 clamps). Refer to the table above for other parameters.
 
-## Additional configuration
+## Additional Configuration
 
-### Dual switch devices
+### Dual Switch Devices
 
-Dual switch devices, such as Shelly 2 or 2.5, should be mapped using separate device for each channel. Simply specify *channel* parameters accordingly.
+Dual switch devices, such as Shelly 2 or 2.5, should be mapped using a separate device for each channel. Specify the *channel* parameters accordingly.
 
-### Scene controllers
+### Scene Controllers
 
-Many devices are also offering scene controller capabilities. Map a new device using *shelly_scenecontroller* as a template. Simply specify *channel* parameters accordingly for multi-buttons devices (Shelly 2.5, i3, etc).
+Many devices offer scene controller capabilities. Map a new device using *shelly_scenecontroller* as a template. Specify the *channel* parameters accordingly for multi-button devices (Shelly 2.5, i3, etc.).
 
 ### Shelly Uni
 
-Shelly Uni is offering two inputs and two outputs, so you should map it using *shelly_relay_simple* (using *channel* as 0 or 1) and *shelly_binary* (using *channel* as 0 or 1).
-You'll end up with 4 devices, 2 mapping the inputs and 2 mapping the outputs. If you have temperatures/humidity sensors, map a new device using *shelly_exttemperature* or *shelly_exthumidity*, setting the appropriate channels. You'll probably have 4-5 devices mapped, which gives you all the control over what's represented.
-Use *shelly_uni_adc* if you want to get ADC measurements.
+Shelly Uni offers two inputs and two outputs. Map it using *shelly_relay_simple* (with *channel* as 0 or 1) and *shelly_binary* (with *channel* as 0 or 1). This results in four devices: two mapping the inputs and two mapping the outputs. For temperature/humidity sensors, map a new device using *shelly_exttemperature* or *shelly_exthumidity*, setting the appropriate channels. This typically results in 4-5 devices mapped, giving you full control over what is represented. Use *shelly_uni_adc* for ADC measurements.
 
 ### OwnTracks
 
-This template will create a device that has:
- - a string sensor with the current region
+This template creates a device with:
+ - a string sensor for the current region
  - a binary sensor that's true when the user is at home
- - locations info via *location* capability
+ - location info via *location* capability
  - battery info for the device (including percentage and charging status)
 
-Please refer to [OwnTracks documentation](https://owntracks.org/booklet/guide/topics/) for more info about the topics structure.
+Refer to the [OwnTracks documentation](https://owntracks.org/booklet/guide/topics/) for more information on the topic structure.
 
-Let's suppose your base topic for owntracks is `owntracks/daniele/iPhone`.
+Suppose your base topic for OwnTracks is `owntracks/daniele/iPhone`. In your *reactor.yaml*, under *controllers:*, search for *mqtt*, and then under *config* add:
 
-In your *reactor.yaml*, under *controllers:*, search for *mqtt*, and then under *config* add this configuration:
-
-```
+```yaml
         ...
         owntracks_daniele: #entity ID - must be unique
           name: "Daniele's Location" # friendly name
@@ -121,17 +118,15 @@ In your *reactor.yaml*, under *controllers:*, search for *mqtt*, and then under 
           notHomeRegionName: "not_home"
 ```
 
-Where `prefix` is the first part of the MQTT topic (*daniele* in our case) and `topic` is the last part, typically the device (*iPhone*).
-`homeRegionName` is the name of your home region and will be used in order to update the binary sensor. It's case insensitive.
-`notHomeRegionName` is the name of the region when not home. If omitted, it's null.
+Where `prefix` is the first part of the MQTT topic (*daniele* in this case) and `topic` is the last part, typically the device (*iPhone*). `homeRegionName` is the name of your home region and will be used to update the binary sensor. It's case insensitive. `notHomeRegionName` is the name of the region when not home. If omitted, it defaults to null.
 
-If you have multiple devices to track, just repeat the same configuration, using a different entity ID.
+If you have multiple devices to track, repeat the same configuration using a different entity ID.
 
 ### Prism Solar
 
-To fully support this EV Charger, you'll need to map two devices:
+To fully support this EV Charger, map two devices:
 
-```
+```yaml
         ...
         # prism
         prism_solar_charger:
@@ -147,34 +142,31 @@ To fully support this EV Charger, you'll need to map two devices:
           uses_template: prism_solar_session
 ```
 
-The first device will implement the charger and its commands. The second one will show the information (power, current and energy) for the current charging session.
-*channel* is usually 1, unless you have a Prism Solar Duo. In this case, you'll need to map multiple devices using *prism_solar_charger* as base template.
-Neither poll nor LWT are supported by Prism Solar.
-Even if night mode is supported via MQTT messages, it's better to create something with Reactor capabilities, because it has a cumbersome structure and it's mostly cloud-driven.
+The first device will implement the charger and its commands. The second will show the information (power, current, and energy) for the current charging session. *Channel* is usually 1, unless you have a Prism Solar Duo. In that case, map multiple devices using *prism_solar_charger* as the base template. Neither poll nor LWT are supported by Prism Solar. Although night mode is supported via MQTT messages, it's better to create something with Reactor capabilities due to its cumbersome structure and cloud dependency.
 
 ### Fully Kiosk
 
-The device has support for these capabilities:
- - binary sensor (for screen turned on/off)
- - dimming (for screen brigthness)
+This device supports these capabilities:
+ - binary sensor (for screen on/off)
+ - dimming (for screen brightness)
  - battery level and charging status (plugged-in, battery power)
  - string_sensor (to show the current app)
- 
- Unfortunately, Fully Kiosk  supports commands only via HTTP and thus a virtual device is needed to send commands.
+
+Unfortunately, Fully Kiosk supports commands only via HTTP, so a virtual device is needed to send commands.
 
 # Contribute
 
-If you have MQTT payloads for Shelly Gen3 and want them covered, just use the same procedure as outlined in *Support* to ask for a template.
+If you have MQTT payloads for Shelly Gen3 and want them covered, use the procedure outlined in *Support* to request a template.
 
 # Changelog
 
- - *24153*: refactoring, removal of *switchbot_switch* template.
- - *24147*: just a couple of fix post 24146.
+ - *24153*: Refactoring, removal of *switchbot_switch* template.
+ - *24147*: Fixes post 24146.
  - *24146*: New features for MQTTController 24144, refactoring.
  - *24144*: Added support for MQTTController 24144.
- - *24111*: Requires MQTTController v 24108. Bug fixing, support for *wifi_status*.
- - *23234*: Shelly's Temperature and Humidity sensors report *999* as value if the value is null. Added a filter to prevent incorrect readings. Added support for *shelly_relay_simple_reversed* and *shelly_uni_adc*.
- - *24002*: New logic to get online status, with each update.
+ - *24111*: Requires MQTTController v24108. Bug fixes, support for *wifi_status*.
+ - *23234*: Shelly's Temperature and Humidity sensors report *999* as value if null. Added a filter to prevent incorrect readings. Added support for *shelly_relay_simple_reversed* and *shelly_uni_adc*.
+ - *24002*: New logic for online status with each update.
  - *22363*: Fixes for *prism_solar*; *owntracks_sensor* now fully supports *notHomeRegionName*, better handling of region transitions.
 
 # Support
