@@ -4,15 +4,8 @@
 # For updates see https://github.com/dbochicchio/reactor-mqtt-contrib
 #
 # *** IMPORTANT ***
-# Just copy this file under reactor/config/mqtt_templates. 
-# If mqtt_templates directory does not exist, simply create it.
-# Copy the files and restart Reactor. Every time you update the files, a restart is needed.
+# Every time you update the files, a restart is needed.
 ---
-version:  24147
-revision: 1
-format: 1
-requires: 24144
-
 templates:
   # Shelly Door/Window Sensor 2
   shelly_dw2:
@@ -21,9 +14,6 @@ templates:
     primary_attribute: door_sensor.state
     requires: [topic]
     description: Shelly Door/Window Sensor 2
-    contributor_name: "Daniele Bochicchio <daniele@bochicchio.com>"
-    license: MIT
-    contributor_url: https://github.com/dbochicchio/reactor-mqtt-contrib
     include:
       - shelly_online_gen1
       - shelly_battery_gen1
@@ -67,9 +57,6 @@ templates:
     primary_attribute: temperature_sensor.value
     requires: [topic, channel]
     description: Shelly with external temperature sensors
-    contributor_name: "Daniele Bochicchio <daniele@bochicchio.com>"
-    license: MIT
-    contributor_url: https://github.com/dbochicchio/reactor-mqtt-contrib
     include:
       - shelly_online_gen1
     events:
@@ -87,9 +74,6 @@ templates:
     primary_attribute: humidity_sensor.value
     requires: [topic, channel]
     description: Shelly with external humidity sensors
-    contributor_name: "Daniele Bochicchio <daniele@bochicchio.com>"
-    license: MIT
-    contributor_url: https://github.com/dbochicchio/reactor-mqtt-contrib
     include:
       - shelly_online_gen1
     events:
@@ -125,9 +109,6 @@ templates:
     primary_attribute: value_sensor.value
     requires: [topic]
     description: Shelly Uni ADC sensor
-    contributor_name: "Daniele Bochicchio <daniele@bochicchio.com>"
-    license: MIT
-    contributor_url: https://github.com/dbochicchio/reactor-mqtt-contrib
     include:
       - shelly_online_gen1
     events:

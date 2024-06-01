@@ -4,7 +4,7 @@ This repo contains additional MQTT templates for Reactor.
 
 # Installation
 
-Download all the yaml files, zip them  (the name of the zip files doesn't matter) and save the zip file under *reactor/config/mqtt_templates*. If *mqtt_templates* directory does not exist, simply create it. If you prefer to have them in a directory, create it and place the zip files there. Reactor will search for templates in any zip or yaml file under the aforementioned location.
+Download the zip file from the releases and save it file under *reactor/config/mqtt_templates*. If *mqtt_templates* directory does not exist, simply create it. If you prefer to have them in a directory, just create it and unzip the files there. Reactor will search for templates in any zip or yaml file under the aforementioned location.
 After copying the files, restart Reactor. Every time you update the files, a restart is needed.
 
 # How to update
@@ -55,7 +55,6 @@ Shelly Gen3 templates are work in progress. I don't have many of them at the mom
 
 | Template ID | Device | Capabilities | Parameters |
 | ------------- | ------------- | ------------- | ------------- |
-| switchbot_switch | Switchbot Switch mapped from [switchbot-mqtt](https://github.com/fphammerle/switchbot-mqtt) | power_switch, toggle, battery_power | topic |
 | fullykiosk | [Fully Kiosk](https://www.fully-kiosk.com/). See additional configuration for info. | string_sensor, binary_sensor, battery_power, battery_maintenance, dimming, wifi_status | topic |
 | owntracks_sensor | OwnTracks Sensor with multiple informations (position, current region, device battery). See additional configuration for info. | string_sensor, binary_sensor, battery_power, battery_maintenance, location | prefix, topic, homeRegionName, notHomeRegionName |
 | prism_solar_charger,  prism_solar_session | Prism Solar EV Charger from [Silla Industries](https://silla.industries/en/docs/prism/prism-use-and-maintenance/). See additional configuration for info. | ev_charger, power_switch, toggle, power_sensor, energy_sensor, voltage_sensor, current_sensor | topic, channel |
@@ -169,6 +168,7 @@ If you have MQTT payloads for Shelly Gen3 and want them covered, just use the sa
 
 # Changelog
 
+ - *24153*: refactoring, removal of *switchbot_switch* template.
  - *24147*: just a couple of fix post 24146.
  - *24146*: New features for MQTTController 24144, refactoring.
  - *24144*: Added support for MQTTController 24144.

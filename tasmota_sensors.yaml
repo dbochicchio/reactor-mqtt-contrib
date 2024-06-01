@@ -4,24 +4,14 @@
 # For updates see https://github.com/dbochicchio/reactor-mqtt-contrib
 #
 # *** IMPORTANT ***
-# Just copy this file under reactor/config/mqtt_templates. 
-# If mqtt_templates directory does not exist, simply create it.
-# Copy the files and restart Reactor. Every time you update the files, a restart is needed.
+# Every time you update the files, a restart is needed.
 ---
-version:  24147
-revision: 1
-format: 1
-requires: 24144
-
 templates:
   tasmota_wifi:
     type: ValueSensor
     capabilities: ["wifi_status"]
     requires: [topic, source]
     description: Tasmota Wifi Template - do not
-    contributor_name: "Daniele Bochicchio <daniele@bochicchio.com>"
-    license: MIT
-    contributor_url: https://github.com/dbochicchio/reactor-mqtt-contrib
     lwt: "tele/%topic%/LWT"
     query: "cmnd/%topic%/STATE"
     events:
@@ -48,9 +38,6 @@ templates:
     primary_attribute: value_sensor.value
     requires: [topic, source]
     description: Tasmota device with barometric pressure sensor
-    contributor_name: "Daniele Bochicchio <daniele@bochicchio.com>"
-    license: MIT
-    contributor_url: https://github.com/dbochicchio/reactor-mqtt-contrib
     include:
       - tasmota_wifi
     events:
@@ -73,9 +60,6 @@ templates:
     primary_attribute: light_sensor.value
     requires: [topic, source]
     description: Tasmota device with illuminance sensor
-    contributor_name: "Daniele Bochicchio <daniele@bochicchio.com>"
-    license: MIT
-    contributor_url: https://github.com/dbochicchio/reactor-mqtt-contrib
     include:
       - tasmota_wifi
     events:

@@ -1,0 +1,19 @@
+# manifest.yaml
+#
+# Copyright (C) 2022-2024 Daniele Bochicchio, All Rights Reserved
+# For updates see https://github.com/dbochicchio/reactor-mqtt-contrib
+#
+# *** IMPORTANT ***
+# Every time you update the files, a restart is needed.
+---
+version:  24153
+revision: 1
+format: 1
+requires: 24144
+description: "Reactor MQTT Contrib: community templates for your MQTT devices"
+contributor_name: "Daniele Bochicchio <daniele@bochicchio.com>"
+license: MIT
+contributor_url: "https://github.com/dbochicchio/reactor-mqtt-contrib"
+repository: "https://github.com/dbochicchio/reactor-mqtt-contrib"
+
+templates: {}
