@@ -22,7 +22,7 @@ templates:
   # Shelly relay (simple template)
   shelly_relay_gen3:
     type: Switch
-    capabilities: ["power_switch", "toggle", "wifi_status"]
+    capabilities: ["power_switch", "toggle"]
     primary_attribute: power_switch.state
     requires: [topic, channel]
     description: Shelly Gen3 relay
@@ -34,11 +34,11 @@ templates:
       - shelly_online_gen3
     events:
       # command-based events
-      "%topic%/status/":
+      "%topic%/status/switch:%channel%":
         "power_switch.state":
           json_payload: true
-          if_expr: "payload?['switch:' + str(channel)] !== null"
-          expr: "bool( payload?['switch:' + str(channel)]?.output )"
+          if_expr: "payload?.output !== null"
+          expr: "bool( payload.output )"
         "x_mqtt_device.online": true
 
       # RPC-based events
@@ -64,3 +64,55 @@ templates:
             expr: "parameters.state ? 'on' : 'off'"
             type: raw
       # toggle.toggle is implemented by the default handler in MQTTController
+
+# Shelly relay with power meter
+  shelly_relay_power_gen3:
+    type: Switch
+    capabilities: ["power_sensor", "energy_sensor", "voltage_sensor", "current_sensor"]
+    primary_attribute: power_switch.state
+    requires: [topic, channel]
+    description: Shelly Gen3 relay with power meter
+    lwt: "%topic%/online"
+    query:
+      topic: "%topic%/command"
+      payload: "status_update"
+    include:
+      - shelly_relay_gen3
+    events:
+      "%topic%/events/rpc":
+        "power_switch.state":
+          json_payload: true
+          if_expr: "(payload.method==='NotifyStatus' || payload.method==='NotifyFullStatus') && payload?.params?['switch:' + str(channel)]?.output !== null"
+          expr: "bool( payload.params['switch:' + str(channel)].output )"
+        "x_mqtt_device.online": true
+
+      "%topic%/status/switch:%channel%":
+        # "power_switch.state":
+        #   json_payload: true
+        #   if_expr: "payload?.output !== null"
+        #   expr: "bool( payload.output )"
+
+        "power_sensor.value":
+          json_payload: true
+          if_expr: "payload?.apower != null"
+          expr: "float( payload.apower )"
+        "power_sensor.units": "W"
+
+        "energy_sensor.value":
+          json_payload: true
+          if_expr: "payload?.aenergy?.total != null"
+          expr: "round(float( payload.aenergy.total) / 0.06, 4)" # value / 60 / 1000
+        "energy_sensor.units": "KWH"
+
+        "current_sensor.value":
+          json_payload: true
+          if_expr: "payload?.current != null"
+          expr: "round(float( payload.current ), 2)"
+        "current_sensor.units": "A"
+
+        "voltage_sensor.value":
+          json_payload: true
+          if_expr: "payload?.voltage != null"
+          expr: "round(float( payload.voltage ), 2)"
+        "voltage_sensor.units": "V"
+        "x_mqtt_device.online": true

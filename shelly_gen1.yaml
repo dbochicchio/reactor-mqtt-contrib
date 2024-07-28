@@ -10,6 +10,7 @@ templates:
   # Shelly online template
   shelly_online_gen1:
     capabilities: ["x_mqtt_device"]
+    # , "x_shelly_gen1"]
     requires: [topic]
     description: Shelly Online template for gen 1 - dot not use directly
     query:
@@ -21,14 +22,26 @@ templates:
     include:
       - shelly_wifi_gen1 # from MQTTController
     events:
+      # "shellies/%topic%/announce":
+      #   "x_shelly_gen1.firwmare_available":
+      #     json_payload: true
+      #     expr: "bool(payload.new_fw)"
+      #   "x_mqtt_device.online":
+      #     expr: 'true'
       "shellies/%topic%/online":
         "x_mqtt_device.online":
           expr: 'bool(payload)'
 
+    # actions:
+    #   x_shelly_gen1:
+    #     update_firmware:
+    #       topic: "shellies/%topic%/command"
+    #       payload: "update_fw"
+
   # Shelly relay (simple template)
   shelly_relay_simple:
     type: Switch
-    capabilities: ["power_switch", "toggle", "wifi_status"]
+    capabilities: ["power_switch", "toggle"]
     primary_attribute: power_switch.state
     requires: [topic, channel]
     description: Shelly relay
@@ -42,10 +55,10 @@ templates:
 
     actions:
       power_switch:
-        "on":
+        on:
           topic: "shellies/%topic%/relay/%channel%/command"
           payload: "on"
-        "off":
+        off:
           topic: "shellies/%topic%/relay/%channel%/command"
           payload: "off"
         set:
@@ -60,7 +73,7 @@ templates:
   # HINT: this is useful for relays that are normally closed
   shelly_relay_simple_reversed:
     type: Switch
-    capabilities: ["power_switch", "toggle", "wifi_status"]
+    capabilities: ["power_switch", "toggle"]
     primary_attribute: power_switch.state
     requires: [topic, channel]
     description: Shelly relay (reversed - normally closed)
@@ -74,13 +87,13 @@ templates:
 
     actions:
       power_switch:
-        "on":
+        on:
           topic: "shellies/%topic%/relay/%channel%/command"
           payload: "off"
-        "off":
+        off:
           topic: "shellies/%topic%/relay/%channel%/command"
           payload: "on"
-        "set":
+        set:
           topic: "shellies/%topic%/relay/%channel%/command"
           payload:
             expr: "parameters.state ? 'off' : 'on'"
@@ -90,7 +103,7 @@ templates:
   # Shelly relay with power meter
   shelly_relay_power:
     type: Switch
-    capabilities: ["power_switch", "toggle", "power_sensor", "energy_sensor", "wifi_status"]
+    capabilities: ["power_switch", "toggle", "power_sensor", "energy_sensor"]
     primary_attribute: power_switch.state
     requires: [topic, channel]
     description: Shelly relay with power meter
@@ -102,6 +115,7 @@ templates:
         "power_sensor.value":
           if_expr: "payload == 'off'"
           expr: "float(0)"
+        "power_sensor.units": "W"
         "x_mqtt_device.online": true
 
       "shellies/%topic%/relay/%channel%/power":
@@ -119,7 +133,7 @@ templates:
   # Shelly dimmer
   shelly_dimmer:
     type: Switch
-    capabilities: ["power_switch", "toggle", "dimming", "power_sensor", "energy_sensor", "wifi_status"]
+    capabilities: ["power_switch", "toggle", "dimming", "power_sensor", "energy_sensor"]
     primary_attribute: power_switch.state
     requires: [topic, channel]
     description: Shelly dimmer
@@ -149,24 +163,24 @@ templates:
 
     actions:
       power_switch:
-        "on":
+        on:
           topic: "shellies/%topic%/relay/%channel%/set"
           payload:
             expr: '{turn: "on"}'
             type: json
-        "off":
+        off:
           topic: "shellies/%topic%/relay/%channel%/set"
           payload:
             expr: '{turn: "off"}'
             type: json
-        "set":
+        set:
           topic: "shellies/%topic%/relay/%channel%/command"
           payload:
             expr: '{turn: parameters.state ? "on" : "off"}'
             type: json
 
       dimming:
-        "set":
+        set:
           topic: "shellies/%topic%/relay/%channel%/set"
           payload:
             expr: '{turn: "on", brightness: round(parameters.level * 100, 0) }'
@@ -177,7 +191,7 @@ templates:
   # Shelly cover
   shelly_cover:
     type: Switch
-    capabilities: ["power_switch", "toggle", "cover", "position", "power_sensor", "energy_sensor", "wifi_status"]
+    capabilities: ["power_switch", "toggle", "cover", "position", "power_sensor", "energy_sensor"]
     primary_attribute: power_switch.state
     requires: [topic]
     description: Shelly relay
@@ -214,13 +228,13 @@ templates:
 
     actions:
       power_switch:
-        "on":
+        on:
           topic: "shellies/%topic%/roller/0/command"
           payload: "open"
-        "off":
+        off:
           topic: "shellies/%topic%/roller/0/command"
           payload: "close"
-        "set":
+        set:
           topic: "shellies/%topic%/roller/0/command"
           payload:
             expr: "parameters.state ? 'open' : 'close'"
@@ -228,27 +242,27 @@ templates:
       # toggle.toggle is implemented by the default handler in MQTTController
 
       position:
-        "set":
+        set:
           topic: "shellies/%topic%/roller/0/command/pos"
           payload:
             expr: "float(parameters.value) * 100"
             type: raw
 
       cover:
-        "open":
+        open:
           topic: "shellies/%topic%/roller/0/command"
           payload: "open"
-        "close":
+        close:
           topic: "shellies/%topic%/roller/0/command"
           payload: "close"
-        "stop":
+        stop:
           topic: "shellies/%topic%/roller/0/command"
           payload: "stop"
 
   # Shelly as scene controller
   shelly_scenecontroller:
     type: Button
-    capabilities: ["scene_activation", "button", "wifi_status"]
+    capabilities: ["scene_activation", "button"]
     primary_attribute: button.state
     requires: [topic, channel]
     description: Shelly as scene controller
@@ -276,7 +290,7 @@ templates:
   # Shelly HEM
   shelly_hem:
     type: ValueSensor
-    capabilities: ["power_sensor", "energy_sensor", "voltage_sensor", "current_sensor", "power_factor_sensor", "x_energy_sensor_exported", "wifi_status"]
+    capabilities: ["power_sensor", "energy_sensor", "voltage_sensor", "current_sensor", "power_factor_sensor", "x_energy_sensor_exported"]
     primary_attribute: power_sensor.value
     requires: [topic, channel]
     description: Shelly HEM (EM, 3EM)
@@ -322,6 +336,19 @@ templates:
 
 # CUSTOM CAPABILITIES for Shellies
 capabilities:
+  # x_shelly_gen1:
+  #   actions:
+  #     update_firmware: {}
+  #     reboot: {}
+  #   attributes:
+  #     firwmare_available:
+  #       type: bool
+  #       default: false
+  # reboot:
+  #   arguments: {}
+  #   topic: "shellies/%topic%/reboot"
+  #   payload: null
+
   x_energy_sensor_exported:
     attributes:
       value:

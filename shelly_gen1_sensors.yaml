@@ -10,7 +10,7 @@ templates:
   # Shelly Door/Window Sensor 2
   shelly_dw2:
     type: BinarySensor
-    capabilities: ["door_sensor", "light_sensor", "tilt_sensor", "motion_sensor", "battery_power", "wifi_status"]
+    capabilities: ["door_sensor", "light_sensor", "tilt_sensor", "motion_sensor", "battery_power"]
     primary_attribute: door_sensor.state
     requires: [topic]
     description: Shelly Door/Window Sensor 2
@@ -53,7 +53,7 @@ templates:
   # Shelly with external temp sensor
   shelly_exttemperature:
     type: ValueSensor
-    capabilities: ["temperature_sensor", "wifi_status"]
+    capabilities: ["temperature_sensor"]
     primary_attribute: temperature_sensor.value
     requires: [topic, channel]
     description: Shelly with external temperature sensors
@@ -70,7 +70,7 @@ templates:
   # Shelly with external humidity sensor
   shelly_exthumidity:
     type: ValueSensor
-    capabilities: ["humidity_sensor", "wifi_status"]
+    capabilities: ["humidity_sensor"]
     primary_attribute: humidity_sensor.value
     requires: [topic, channel]
     description: Shelly with external humidity sensors
@@ -87,13 +87,10 @@ templates:
   # Shelly with binary input
   shelly_binary:
     type: BinarySensor
-    capabilities: ["binary_sensor", "wifi_status"]
+    capabilities: ["binary_sensor"]
     primary_attribute: binary_sensor.state
     requires: [topic, channel]
     description: Shelly with detached inputs, mapped as binary sensor
-    contributor_name: "Daniele Bochicchio <daniele@bochicchio.com>"
-    license: MIT
-    contributor_url: https://github.com/dbochicchio/reactor-mqtt-contrib
     include:
       - shelly_online_gen1
     events:
@@ -105,9 +102,9 @@ templates:
   # Shelly Uni ADC sensor
   shelly_uni_adc:
     type: ValueSensor
-    capabilities: ["value_sensor", "wifi_status"]
+    capabilities: ["value_sensor"]
     primary_attribute: value_sensor.value
-    requires: [topic]
+    requires: [topic, channel]
     description: Shelly Uni ADC sensor
     include:
       - shelly_online_gen1

@@ -11,7 +11,7 @@ templates:
     type: ValueSensor
     capabilities: ["wifi_status"]
     requires: [topic, source]
-    description: Tasmota Wifi Template - do not
+    description: Tasmota Wifi Template - do not use directly
     lwt: "tele/%topic%/LWT"
     query: "cmnd/%topic%/STATE"
     events:

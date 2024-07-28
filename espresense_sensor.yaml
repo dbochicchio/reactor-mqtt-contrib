@@ -10,7 +10,7 @@ templates:
   # ESPresense binary device
   espresense_sensor:
     type: BinarySensor
-    capabilities: ["presence_sensor", "string_sensor", "x_espresense"]
+    capabilities: ["presence_sensor", "string_sensor", "x_espresense", "wifi_status"]
     primary_attribute: presence_sensor.state
     requires: [deviceid]
     description: ESPresense sensor mapped as binary sensor

@@ -19,7 +19,7 @@ All templates support *query*/*init* commands, and their state will be updated a
 
 ## Shelly Gen1
 
-Shelly Gen1 templates are mature, and most device types are supported.
+Shelly Gen1 templates are mature, and most device types are supported. This devices have a special *x_shelly_gen1* capability, with *update_firwmare* command to issue firmware updates. A special *firwmare_available* (bool) attributes is provided.
 
 | Template ID | Device | Capabilities | Parameters |
 | ------------- | ------------- | ------------- | ------------- |
@@ -44,6 +44,7 @@ Shelly Gen3 templates are a work in progress. I currently have only a few of the
 | Template ID | Device | Capabilities | Parameters |
 | ------------- | ------------- | ------------- | ------------- |
 | shelly_relay_gen3 | Shelly relay (simple version) | switch, toggle, wifi_status | topic, channel |
+| shelly_relay_power_gen3 | Shelly relay with power meter | switch, toggle, power_sensor, energy_sensor, voltage_sensor, current_sensor, wifi_status | topic, channel |
 
 ## Tasmota
 
@@ -160,6 +161,8 @@ If you have MQTT payloads for Shelly Gen3 and want them covered, use the procedu
 
 # Changelog
 
+ - *24210*: Bug fixing. New templates for *shelly_relay_power_gen3*.
+ - *24161*: new *x_shelly_gen1* capability, with *update_firmware* command.
  - *24153*: Refactoring, removal of *switchbot_switch* template.
  - *24147*: Fixes post 24146.
  - *24146*: New features for MQTTController 24144, refactoring.
