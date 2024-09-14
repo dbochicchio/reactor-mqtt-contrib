@@ -60,7 +60,7 @@ Shelly Gen3 templates are a work in progress. I currently have only a few of the
 | fullykiosk | [Fully Kiosk](https://www.fully-kiosk.com/). See additional configuration for info. | string_sensor, binary_sensor, battery_power, battery_maintenance, dimming, wifi_status | topic |
 | owntracks_sensor | OwnTracks Sensor with multiple information (position, current region, device battery). See additional configuration for info. | string_sensor, binary_sensor, battery_power, battery_maintenance, location | prefix, topic, homeRegionName, notHomeRegionName |
 | prism_solar_charger, prism_solar_session | Prism Solar EV Charger from [Silla Industries](https://silla.industries/en/docs/prism/prism-use-and-maintenance/). See additional configuration for info. | ev_charger, power_switch, toggle, power_sensor, energy_sensor, voltage_sensor, current_sensor | topic, channel |
-| homekey_esp32| [# HomeKey-ESP32](https://github.com/rednblkx/HomeKey-ESP32). See additional configuration for info. | lock, tag, wifi_status | auth_topic, state_topic, state_set_topic, lwt_topic |
+| homekey_esp32| [HomeKey-ESP32](https://github.com/rednblkx/HomeKey-ESP32). See additional configuration for info. | lock, tag, wifi_status | auth_topic, state_topic, state_set_topic, lwt_topic |
 
 # Configuration
 
@@ -163,7 +163,8 @@ Unfortunately, Fully Kiosk supports commands only via HTTP, so a virtual device 
 The following attributes should be specified in the device configuragion under Reactor's MQTT section:
 
 ```
-...
+        ...
+        # HomeKeys
         homekey_front:
           name: "HomeKey Front"
           uses_template: homekey_esp32
