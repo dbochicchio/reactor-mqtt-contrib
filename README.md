@@ -177,11 +177,11 @@ The following attributes should be specified in the device configuragion under R
 You'll get the default MQTT topics from the HomeKey-ESP32 web UI. My advice is to modify them in a similar way as in the example. I use the ```homekeys/%reader%/%event%``` because I have multiple readers and to stay consistent with my style, but anything is possible and the template will accomodate any style.
 
 ```tag``` capability will have this attributes:
-  - device_id: the reader ID (unique)
-  - tag_id: the key ID (unique by home in Apple Home)
-  - last_scanned: epoc for last scanned date/time
-  - tag_type: HomeKey or NFC (for non HomeKey tags)
-  - scan_count: always 1
+  - ```device_id```: the reader ID (unique)
+  - ```tag_id```: the key ID (unique by home in Apple Home)
+  - ```last_scanned```: epoc for last scanned date/time
+  - ```tag_type```: HomeKey or NFC (for non HomeKey tags)
+  - ```scan_count```: always 1
 
 The HomeKey is a lock under Apple Home, so the device in Reactor will offer you a ```lock``` capability, that it's intended to map the real lock/garage door under Apple Home. By default, the state will not be changed when the card is scanned and your logic will need to be written inside a rule. I have a rule that's setting ```lock.state``` based on the real lock/garage door under Reactor, and another one that's watching for ```tag.device_id```, ```tag.tag_id```, and ```tag.last_scanned``` to determine if the key is valid and the lock/garage door should be opened or not.
 
