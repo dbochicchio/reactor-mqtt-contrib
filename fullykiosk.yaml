@@ -10,7 +10,7 @@ templates:
   # fullykiosk
   fullykiosk:
     type: BinarySensor
-    capabilities: ["string_sensor", "binary_sensor", "battery_power", "battery_maintenance", "dimming", "wifi_status"]
+    capabilities: ["string_sensor", "binary_sensor", "battery_power", "battery_maintenance", "power_source", "dimming", "wifi_status"]
     primary_attribute: string_sensor.value
     requires: [topic]
     description: Fully Kiosk device
@@ -48,6 +48,12 @@ templates:
           expr: "false"
         "battery_maintenance.rechargeable":
           expr: "true"
+
+        # power_source
+        "power_source.source":
+          json_payload: true
+          if_expr: "payload.isPlugged != undefined"
+          expr: "bool(payload.isPlugged) ? 'ac': 'battery'"
 
         # binary sensor for screen status
         "binary_sensor.state":

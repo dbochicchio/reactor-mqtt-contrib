@@ -1,0 +1,74 @@
+# homekey_esp32.yaml
+#
+# Copyright (C) 2022-2024 Daniele Bochicchio, All Rights Reserved
+# For updates see https://github.com/dbochicchio/reactor-mqtt-contrib
+#
+# *** IMPORTANT ***
+# Every time you update the files, a restart is needed.
+---
+templates:
+  # HomeKey-ESP32 - https://github.com/rednblkx/HomeKey-ESP32
+  homekey_esp32:
+    type: BinarySensor
+    capabilities: ["lock", "tag", "wifi_status"]
+    primary_attribute: lock.state
+    requires: [auth_topic, state_topic, state_set_topic, lwt_topic]
+    description: HomeKey-ESP32
+    events:
+      "%state_topic%":
+        # - UNLOCKED = 0
+        # - LOCKED = 1
+        # - JAMMED = 2
+        # - UNKNOWN = 3
+        # - UNLOCKING = 4
+        # - LOCKING = 5
+        "lock.state":
+          expr: "float(payload) == 1"
+        "x_mqtt_device.online": true
+
+      # The payload can be: (HomeKey)
+      # {
+      #   "endpointId": "000000000000", # This is unique per device
+      #   "homekey": true,
+      #   "issuerId": "0000000000000000" # This is unique per Apple ID
+      # }
+      # or (for generic tags)
+      # {
+      #   "atqa": "0004",
+      #   "homekey": false,
+      #   "sak": "08",
+      #   "uid": "00000000" # This is the ID of the NFC Tag
+      # }
+      "%auth_topic%":
+        "tag.tag_type":
+          json_payload: true
+          expr: "bool( payload?.homekey ?? false ) ? 'HomeKey' : 'NFC'"
+        "tag.tag_id":
+          json_payload: true
+          expr: "payload?.homekey ? payload?.issuerId : payload?.uid"
+        "tag.device_id":
+          json_payload: true
+          expr: "payload?.endpointId ?? 'Mifare'"
+        "tag.last_scanned":
+          expr: "time()"
+        "tag.scan_count":
+          expr: "0"
+        "x_mqtt_device.online": true
+
+      "%lwt_topic%":
+        "x_mqtt_device.online":
+          expr: "float(payload) == 'online'"
+
+    actions:
+      lock:
+        "lock":
+          topic: "%state_set_topic%"
+          payload: "1"
+        "unlock":
+          topic: "%state_set_topic%"
+          payload: "0"
+        "set":
+          topic: "%state_set_topic%"
+          payload:
+            expr: "parameters.state ? '1' : '0'"
+            type: raw

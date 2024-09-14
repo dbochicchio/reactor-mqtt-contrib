@@ -60,6 +60,7 @@ Shelly Gen3 templates are a work in progress. I currently have only a few of the
 | fullykiosk | [Fully Kiosk](https://www.fully-kiosk.com/). See additional configuration for info. | string_sensor, binary_sensor, battery_power, battery_maintenance, dimming, wifi_status | topic |
 | owntracks_sensor | OwnTracks Sensor with multiple information (position, current region, device battery). See additional configuration for info. | string_sensor, binary_sensor, battery_power, battery_maintenance, location | prefix, topic, homeRegionName, notHomeRegionName |
 | prism_solar_charger, prism_solar_session | Prism Solar EV Charger from [Silla Industries](https://silla.industries/en/docs/prism/prism-use-and-maintenance/). See additional configuration for info. | ev_charger, power_switch, toggle, power_sensor, energy_sensor, voltage_sensor, current_sensor | topic, channel |
+| homekey_esp32| [# HomeKey-ESP32](https://github.com/rednblkx/HomeKey-ESP32). See additional configuration for info. | lock, tag, wifi_status | auth_topic, state_topic, state_set_topic, lwt_topic |
 
 # Configuration
 
@@ -155,12 +156,41 @@ This device supports these capabilities:
 
 Unfortunately, Fully Kiosk supports commands only via HTTP, so a virtual device is needed to send commands.
 
+#### HomeKey-ESP32
+
+[HomeKey-ESP32](https://github.com/rednblkx/HomeKey-ESP32) is a cool project that gives you an HomeKey without a lock, in a pure DIY manner. See the previous link for info and instructions on how to build the hardware, the software and configure everything. The device will publish its state under MQTT.
+
+The following attributes should be specified in the device configuragion under Reactor's MQTT section:
+
+```
+...
+        homekey_front:
+          name: "HomeKey Front"
+          uses_template: homekey_esp32
+          auth_topic : "homekeys/front/auth"
+          state_topic: "homekeys/front/state"
+          state_set_topic: "homekeys/front/set_state"
+          lwt_topic: homekey-front/status"
+```
+
+You'll get the default MQTT topics from the HomeKey-ESP32 web UI. My advice is to modify them in a similar way as in the example. I use the ```homekeys/%reader%/%event%``` because I have multiple readers and to stay consistent with my style, but anything is possible and the template will accomodate any style.
+
+```tag``` capability will have this attributes:
+  - device_id: the reader ID (unique)
+  - tag_id: the key ID (unique by home in Apple Home)
+  - last_scanned: epoc for last scanned date/time
+  - tag_type: HomeKey or NFC (for non HomeKey tags)
+  - scan_count: always 1
+
+The HomeKey is a lock under Apple Home, so the device in Reactor will offer you a ```lock``` capability, that it's intended to map the real lock/garage door under Apple Home. By default, the state will not be changed when the card is scanned and your logic will need to be written inside a rule. I have a rule that's setting ```lock.state``` based on the real lock/garage door under Reactor, and another one that's watching for ```tag.device_id```, ```tag.tag_id```, and ```tag.last_scanned``` to determine if the key is valid and the lock/garage door should be opened or not.
+
 # Contribute
 
 If you have MQTT payloads for Shelly Gen3 and want them covered, use the procedure outlined in *Support* to request a template.
 
 # Changelog
 
+ - *24258*: Bug fixing. New templates for *HomeKey-ESP32*. Requires Reactor 24257.
  - *24210*: Bug fixing. New templates for *shelly_relay_power_gen3*.
  - *24161*: new *x_shelly_gen1* capability, with *update_firmware* command.
  - *24153*: Refactoring, removal of *switchbot_switch* template.
