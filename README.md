@@ -1,6 +1,6 @@
 # reactor-mqtt-contrib
 
-This repository contains additional MQTT templates for Reactor.
+This repository contains additional MQTT templates for [Reactor](https://reactor.toggledbits.com/docs/).
 
 # Installation
 
@@ -191,7 +191,7 @@ If you have MQTT payloads for Shelly Gen3 and want them covered, use the procedu
 
 # Changelog
 
- - *24258*: Bug fixing. New templates for *HomeKey-ESP32*. Requires Reactor 24257.
+ - *24258*: New template for *HomeKey-ESP32*. *power_source* capability for Fully Kiosk. Requires Reactor 24257.
  - *24210*: Bug fixing. New templates for *shelly_relay_power_gen3*.
  - *24161*: new *x_shelly_gen1* capability, with *update_firmware* command.
  - *24153*: Refactoring, removal of *switchbot_switch* template.
