@@ -162,7 +162,7 @@ Unfortunately, Fully Kiosk supports commands only via HTTP, so a virtual device 
 
 The following attributes should be specified in the device configuragion under Reactor's MQTT section:
 
-```
+```yaml
         ...
         # HomeKeys
         homekey_front:
@@ -176,7 +176,7 @@ The following attributes should be specified in the device configuragion under R
 
 You'll get the default MQTT topics from the HomeKey-ESP32 web UI. My advice is to modify them in a similar way as in the example. I use the ```homekeys/%reader%/%event%``` because I have multiple readers and to stay consistent with my style, but anything is possible and the template will accomodate any style.
 
-```tag``` capability will have this attributes:
+```tag``` capability will have these attributes:
   - ```device_id```: the reader ID (unique)
   - ```tag_id```: the key ID (unique by home in Apple Home)
   - ```last_scanned```: epoc for last scanned date/time
@@ -191,6 +191,7 @@ If you have MQTT payloads for Shelly Gen3 and want them covered, use the procedu
 
 # Changelog
 
+ - *24265*: Fixes for Shelly *energy_sensor*.
  - *24258*: New template for *HomeKey-ESP32*. *power_source* capability for Fully Kiosk. Requires Reactor 24257.
  - *24210*: Bug fixing. New templates for *shelly_relay_power_gen3*.
  - *24161*: new *x_shelly_gen1* capability, with *update_firmware* command.

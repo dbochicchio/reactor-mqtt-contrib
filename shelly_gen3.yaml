@@ -101,7 +101,7 @@ templates:
         "energy_sensor.value":
           json_payload: true
           if_expr: "payload?.aenergy?.total != null"
-          expr: "round(float( payload.aenergy.total) / 0.06, 4)" # value / 60 / 1000
+          expr: "round(float( payload.aenergy.total) * 0.00001667, 4)" # value / (60 * 1000)
         "energy_sensor.units": "KWH"
 
         "current_sensor.value":

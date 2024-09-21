@@ -126,7 +126,7 @@ templates:
 
       "shellies/%topic%/relay/%channel%/energy":
         "energy_sensor.value":
-          expr: "round(float(payload) / 0.06, 4)" # value / 60 / 1000
+          expr: "round(float(payload) * 0.00001667, 4)" # watt-minute - value / (60 * 1000)
         "energy_sensor.units": "KWH"
         "x_mqtt_device.online": true
 
@@ -157,7 +157,7 @@ templates:
 
       "shellies/%topic%/light/%channel%/energy":
         "energy_sensor.value":
-          expr: "round(float(payload) / 0.06, 4)" # value / 60 / 1000
+          expr: "round(float(payload) * 0.00001667, 4)" # watt-minute - value / (60 * 1000)
         "energy_sensor.units": "KWH"
         "x_mqtt_device.online": true
 
@@ -222,7 +222,7 @@ templates:
 
       "shellies/%topic%/roller/0/energy":
         "energy_sensor.value":
-          expr: "round(float(payload) / 0.06, 4)" # value / 60 / 1000
+          expr: "round(float(payload) / 0.00001667, 4)" # watt-minute - value / (60 * 1000)
         "energy_sensor.units": "KWH"
         "x_mqtt_device.online": true
 
@@ -319,13 +319,13 @@ templates:
 
       "shellies/%topic%/emeter/%channel%/total":
         "energy_sensor.value":
-          expr: "round(float(payload) * 0.001, 4)" # 1 Wh = 0.001 kWh - value * 0.001
+          expr: "round(float(payload) * 0.001, 4)" # Wh - value * 0.001
         "energy_sensor.units": "KWH"
         "x_mqtt_device.online": true
 
       "shellies/%topic%/emeter/%channel%/total_returned":
         "x_energy_sensor_exported.value":
-          expr: "round(float(payload) * 0.001, 4)" # 1 Wh = 0.001 kWh - value * 0.001
+          expr: "round(float(payload) * 0.001, 4)" # Wh - value * 0.001
         "x_energy_sensor_exported.units": "KWH"
         "x_mqtt_device.online": true
 
