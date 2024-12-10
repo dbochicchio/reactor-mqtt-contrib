@@ -265,7 +265,7 @@ templates:
     capabilities: ["scene_activation", "button"]
     primary_attribute: button.state
     requires: [topic, channel]
-    description: Shelly as scene controller
+    description: Shelly as button/scene controller
     include:
       - shelly_online_gen1
     events:

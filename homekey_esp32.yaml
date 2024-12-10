@@ -57,7 +57,7 @@ templates:
 
       "%lwt_topic%":
         "x_mqtt_device.online":
-          expr: "float(payload) == 'online'"
+          expr: "payload == 'online'"
 
     actions:
       lock:

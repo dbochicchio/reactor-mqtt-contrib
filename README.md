@@ -19,7 +19,7 @@ All templates support *query*/*init* commands, and their state will be updated a
 
 ## Shelly Gen1
 
-Shelly Gen1 templates are mature, and most device types are supported. This devices have a special *x_shelly_gen1* capability, with *update_firwmare* command to issue firmware updates. A special *firwmare_available* (bool) attributes is provided.
+Shelly Gen1 templates are mature, and most device types are supported. These devices have a special *x_shelly_gen1* capability, with *update_firwmare* command to issue firmware updates. A special *firwmare_available* (bool) attribute is provided to signal when a firmware update is present.
 
 | Template ID | Device | Capabilities | Parameters |
 | ------------- | ------------- | ------------- | ------------- |
@@ -32,14 +32,14 @@ Shelly Gen1 templates are mature, and most device types are supported. This devi
 | shelly_dimmer | Shelly dimmer | dimming, power_switch, toggle, power_sensor, energy_sensor, wifi_status | topic, channel |
 | shelly_exttemperature | Shelly with detached inputs, mapped as binary sensor | binary_sensor, wifi_status | topic, channel |
 | shelly_exthumidity | Shelly with external humidity sensor | humidity_sensor, wifi_status | topic, channel |
-| shelly_scenecontroller | Shelly as scene controller, use with detached inputs or to handle single, double, triple clicks, or long push | button, scene_activation, wifi_status | topic, channel |
+| shelly_scenecontroller | Shelly as button or scene controller, use with detached inputs or to handle single, double, triple clicks, or long push | button, scene_activation, wifi_status | topic, channel |
 | shelly_button1 | Shelly Button 1 | button, battery_power, battery_maintenance, wifi_status | topic, channel |
 | shelly_dw2 | Shelly Door/Window 2 | door_sensor, light_sensor, tilt_sensor, motion_sensor, battery_power, wifi_status | topic |
 | shelly_uni_adc | Shelly UNI ADC | value_sensor, wifi_status | topic |
 
 ## Shelly Gen3
 
-Shelly Gen3 templates are a work in progress. I currently have only a few of them.
+Shelly Gen3 templates are a work in progress. I currently have only a few of them. Feel free to ask for a specific template (be sure to provide MQTT logs).
 
 | Template ID | Device | Capabilities | Parameters |
 | ------------- | ------------- | ------------- | ------------- |
@@ -64,7 +64,7 @@ Shelly Gen3 templates are a work in progress. I currently have only a few of the
 
 # Configuration
 
-Let's say you want to map a Shelly HEM. In your *reactor.yaml*, under *controllers:*, search for *mqtt*, then *config*, and add:
+Let's say you want to map a Shelly EM. In your *reactor.yaml*, under *controllers:*, search for *mqtt*, then *config*, and add:
 
 ```yaml
   - id: mqtt
@@ -81,21 +81,22 @@ Let's say you want to map a Shelly HEM. In your *reactor.yaml*, under *controlle
           channel: 0    
 ```
 
-Where *shelly-solar* is the device name (configured in your Shelly as the MQTT topic) and *channel* is the index (Shelly HEM supports 2 clamps). Refer to the table above for other parameters.
+Where *shelly-solar* is the device name (configured in your Shelly as the MQTT topic) and *channel* is the index (Shelly EM supports 2 clamps). Refer to the table above for other parameters.
 
 ## Additional Configuration
 
 ### Dual Switch Devices
 
-Dual switch devices, such as Shelly 2 or 2.5, should be mapped using a separate device for each channel. Specify the *channel* parameters accordingly.
+Dual switch devices, such as Shelly 2 or 2.5, should be mapped using a separate device for each channel. Specify the *channel* parameters accordingly (starting from 0).
 
 ### Scene Controllers
 
-Many devices offer scene controller capabilities. Map a new device using *shelly_scenecontroller* as a template. Specify the *channel* parameters accordingly for multi-button devices (Shelly 2.5, i3, etc.).
+Many devices offer scene controller capabilities. Map a new device using *shelly_scenecontroller* as a template. Specify the *channel* parameters accordingly for multi-button devices (Shelly 2.5, i3, etc.), always starting from 0 as the first channel.
 
 ### Shelly Uni
 
-Shelly Uni offers two inputs and two outputs. Map it using *shelly_relay_simple* (with *channel* as 0 or 1) and *shelly_binary* (with *channel* as 0 or 1). This results in four devices: two mapping the inputs and two mapping the outputs. For temperature/humidity sensors, map a new device using *shelly_exttemperature* or *shelly_exthumidity*, setting the appropriate channels. This typically results in 4-5 devices mapped, giving you full control over what is represented. Use *shelly_uni_adc* for ADC measurements.
+Shelly Uni offers two inputs and two outputs. Map it using *shelly_relay_simple* (with *channel* as 0 or 1) for outpouts and *shelly_binary* (with *channel* as 0 or 1) for inputs. This will give you four devices: two are mapping the inputs and two are mapping the outputs.
+For temperature/humidity sensors, map a new device using *shelly_exttemperature* or *shelly_exthumidity*, setting the appropriate channels. This typically results in 4-5 devices mapped, giving you full control over what is represented. Use *shelly_uni_adc* for ADC measurements.
 
 ### OwnTracks
 
@@ -171,7 +172,7 @@ The following attributes should be specified in the device configuragion under R
           auth_topic : "homekeys/front/auth"
           state_topic: "homekeys/front/state"
           state_set_topic: "homekeys/front/set_state"
-          lwt_topic: homekey-front/status"
+          lwt_topic: "homekey-front/status"
 ```
 
 You'll get the default MQTT topics from the HomeKey-ESP32 web UI. My advice is to modify them in a similar way as in the example. I use the ```homekeys/%reader%/%event%``` because I have multiple readers and to stay consistent with my style, but anything is possible and the template will accomodate any style.
