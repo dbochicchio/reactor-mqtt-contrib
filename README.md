@@ -45,6 +45,8 @@ Shelly Gen3 templates are a work in progress. I currently have only a few of the
 | ------------- | ------------- | ------------- | ------------- |
 | shelly_relay_gen3 | Shelly relay (simple version) | switch, toggle, wifi_status | topic, channel |
 | shelly_relay_power_gen3 | Shelly relay with power meter | switch, toggle, power_sensor, energy_sensor, voltage_sensor, current_sensor, wifi_status | topic, channel |
+shelly_dimmer_power_gen3 | Shelly dimmer with power meter | switch, toggle, dimming, power_sensor, energy_sensor, voltage_sensor, current_sensor, wifi_status | topic, channel |
+shelly_hem_gen3| Shelly Energy Meter (only total endpoint) |power_sensor, energy_sensor, voltage_sensor, current_sensor, wifi_status | topic |
 
 ## Tasmota
 
@@ -192,6 +194,7 @@ If you have MQTT payloads for Shelly Gen3 and want them covered, use the procedu
 
 # Changelog
 
+ - *25244*: New templates for shelly_hem_gen3, shelly_dimmer_power_gen3. Fixes.
  - *24265*: Fixes for Shelly *energy_sensor*.
  - *24258*: New template for *HomeKey-ESP32*. *power_source* capability for Fully Kiosk. Requires Reactor 24257.
  - *24210*: Bug fixing. New templates for *shelly_relay_power_gen3*.
