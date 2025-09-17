@@ -10,7 +10,6 @@ templates:
   # Shelly online template
   shelly_online_gen1:
     capabilities: ["x_mqtt_device"]
-    # , "x_shelly_gen1"]
     requires: [topic]
     description: Shelly Online template for gen 1 - dot not use directly
     query:
@@ -18,7 +17,7 @@ templates:
       payload: "update"
       qos: 0
       retain: false
-    #lwt: "shellies/%topic%/online"
+    lwt: "shellies/%topic%/online"
     include:
       - shelly_wifi_gen1 # from MQTTController
     events:
