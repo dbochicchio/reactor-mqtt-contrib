@@ -319,13 +319,13 @@ templates:
 
       "shellies/%topic%/emeter/%channel%/total":
         "energy_sensor.value":
-          expr: "round(float(payload) * 0.001, 4)" # Wh - value * 0.001
+          expr: "round(float(payload) / 1000, 4)" # Wh to Kwh
         "energy_sensor.units": "KWH"
         "x_mqtt_device.online": true
 
       "shellies/%topic%/emeter/%channel%/total_returned":
         "x_energy_sensor_exported.value":
-          expr: "round(float(payload) * 0.001, 4)" # Wh - value * 0.001
+          expr: "round(float(payload) / 1000, 4)" # Wh to Kwh
         "x_energy_sensor_exported.units": "KWH"
         "x_mqtt_device.online": true
 

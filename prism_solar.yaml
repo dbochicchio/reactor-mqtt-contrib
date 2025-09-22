@@ -25,7 +25,7 @@ templates:
       # current_sensor
       "%topic%/%channel%/amp":
         "current_sensor.value":
-          expr: "float(payload) / 1000"
+          expr: "float(payload) / 1000" # mA to A
         "current_sensor.units": "A"
         "x_mqtt_device.online": true
 
@@ -39,7 +39,7 @@ templates:
       # energy_sensor
       "%topic%/%channel%/wh_total":
         "energy_sensor.value":
-          expr: "round(float(payload) * 0.001, 4)" # 1 Wh = 0.001 kWh - value * 0.001
+          expr: "round(float(payload) / 1000, 4)" # Wh to Kwh
         "energy_sensor.units": "KWH"
         "x_mqtt_device.online": true
 
@@ -130,7 +130,7 @@ templates:
       # energy_sensor
       "%topic%/%channel%/wh":
         "energy_sensor.value":
-          expr: "round(float(payload) * 0.001, 4)" # 1 Wh = 0.001 kWh - value * 0.001
+          expr: "round(float(payload) / 1000, 4)" # Wh to Kwh
         "energy_sensor.units": "KWH"
         "x_mqtt_device.online": true
 
