@@ -274,8 +274,8 @@ templates:
               }
             type: json
 
-  # Shelly HEM Gen3
-  shelly_hem_gen3:
+  # Shelly 3EM Gen3
+  shelly_3em_gen3:
     type: Sensor
     capabilities: ["power_sensor", "energy_sensor", "voltage_sensor", "current_sensor"]
     primary_attribute: power_sensor.value
@@ -313,8 +313,51 @@ templates:
         "energy_sensor.value":
           json_payload: true
           if_expr: "payload?.total_act != null"
-          expr: "round(float(payload.total_act), 4)"
+          expr: "round(float(payload.total_act) / 1000, 4)" # from WH to KwH
         "energy_sensor.units": "KWH"
 
         "x_mqtt_device.online": true
 
+  # Shelly HEM Gen3
+  shelly_hem_gen3:
+    type: Sensor
+    capabilities: ["power_sensor", "energy_sensor", "voltage_sensor", "current_sensor"]
+    primary_attribute: power_sensor.value
+    requires: [topic, channel]
+    description: Shelly Gen3 HEM (Home Energy Meter)
+    lwt: "%topic%/online"
+    query:
+      topic: "%topic%/command"
+      payload: "status_update"
+    include:
+      - shelly_online_gen3
+    events:
+      "%topic%/status/em1:%channel%":
+        "power_sensor.value":
+          json_payload: true
+          if_expr: "payload?.act_power != null"
+          expr: "float( payload.act_power )"
+        "power_sensor.units": "W"
+
+        "current_sensor.value":
+          json_payload: true
+          if_expr: "payload?.current != null"
+          expr: "round(float(payload.current), 2)"
+        "current_sensor.units": "A"
+
+        "voltage_sensor.value":
+          json_payload: true
+          if_expr: "payload?.voltage != null"
+          expr: "round(float(payload.voltage), 2)"
+        "voltage_sensor.units": "V"
+
+        "x_mqtt_device.online": true
+
+      "%topic%/status/em1data:%channel%":
+        "energy_sensor.value":
+          json_payload: true
+          if_expr: "payload?.total_act_energy != null"
+          expr: "round(float(payload?.total_act_energy) / 1000, 4)" # from WH to KwH
+        "energy_sensor.units": "KWH"
+
+        "x_mqtt_device.online": true
