@@ -274,13 +274,13 @@ templates:
               }
             type: json
 
-  # Shelly 3EM Gen3 - global (all channels) - for single-phase, use shelly_hem_gen3
+  # Shelly 3EM Gen3
   shelly_3em_gen3:
     type: Sensor
     capabilities: ["power_sensor", "energy_sensor", "voltage_sensor", "current_sensor"]
     primary_attribute: power_sensor.value
     requires: [topic]
-    description: Shelly 3EM Gen3 (Home Energy Meter)
+    description: Shelly Gen3 HEM (Home Energy Meter)
     lwt: "%topic%/online"
     query:
       topic: "%topic%/command"
@@ -313,7 +313,7 @@ templates:
         "energy_sensor.value":
           json_payload: true
           if_expr: "payload?.total_act != null"
-          expr: "round(float(payload.total_act), 4)"
+          expr: "round(float(payload.total_act) / 1000, 4)" # from WH to KwH
         "energy_sensor.units": "KWH"
 
         "x_mqtt_device.online": true
@@ -324,7 +324,7 @@ templates:
     capabilities: ["power_sensor", "energy_sensor", "voltage_sensor", "current_sensor"]
     primary_attribute: power_sensor.value
     requires: [topic, channel]
-    description: Shelly EM Gen3 (Home Energy Meter)
+    description: Shelly Gen3 HEM (Home Energy Meter)
     lwt: "%topic%/online"
     query:
       topic: "%topic%/command"
@@ -357,7 +357,7 @@ templates:
         "energy_sensor.value":
           json_payload: true
           if_expr: "payload?.total_act_energy != null"
-          expr: "round(float(payload?.total_act_energy), 4)"
+          expr: "round(float(payload?.total_act_energy) / 1000, 4)" # from WH to KwH
         "energy_sensor.units": "KWH"
 
         "x_mqtt_device.online": true

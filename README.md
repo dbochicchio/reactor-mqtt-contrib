@@ -195,6 +195,7 @@ If you have MQTT payloads for Shelly Gen3 and want them covered, use the procedu
 
 # Changelog
 
+ - *26265*: Measurement fix (Wh to KwH) for *shelly_3em_gen3* and *shelly_hem_gen3*.
  - *26228*: New template for *shelly_3em_gen3*. Fixes for *shelly_hem_gen3*.
  - *25244*: New templates for shelly_hem_gen3, shelly_dimmer_power_gen3. Fixes.
  - *24265*: Fixes for Shelly *energy_sensor*.
