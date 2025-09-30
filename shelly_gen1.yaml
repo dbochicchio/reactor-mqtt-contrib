@@ -10,6 +10,7 @@ templates:
   # Shelly online template
   shelly_online_gen1:
     capabilities: ["x_mqtt_device"]
+    # , "x_shelly_gen1"]
     requires: [topic]
     description: Shelly Online template for gen 1 - dot not use directly
     query:
@@ -17,7 +18,7 @@ templates:
       payload: "update"
       qos: 0
       retain: false
-    lwt: "shellies/%topic%/online"
+    #lwt: "shellies/%topic%/online"
     include:
       - shelly_wifi_gen1 # from MQTTController
     events:
@@ -261,7 +262,7 @@ templates:
   # Shelly as scene controller
   shelly_scenecontroller:
     type: Button
-    capabilities: ["scene_activation", "button"]
+    capabilities: ["scene_activation", "button", "value_sensor"]
     primary_attribute: button.state
     requires: [topic, channel]
     description: Shelly as button/scene controller
@@ -269,22 +270,31 @@ templates:
       - shelly_online_gen1
     events:
       "shellies/%topic%/input_event/%channel%":
-        "scene_activation.scene_id":
+        - attribute: "value_sensor.value"
           json_payload: true
-          expr: "payload.event"
-        "scene_activation.since":
-          expr: "time()"
-        "button.state":
+          expr: "float(payload?.event_cnt)"
+        - attribute: "button.since"
           json_payload: true
           expr: >
-             payload.event == "S" ? "single" :
-             payload.event == "SS" ? "double" :
-             payload.event == "SSS" ? "triple" :
-             payload.event == "L" ? "long" :
-             "unknown"
-        "button.since":
-          expr: "time()"
-        "x_mqtt_device.online": true
+            (
+              (entity.attributes?.button?.since) == null || 
+              float(payload?.event_cnt) != (entity.attributes?.value_sensor?.value)
+            ) ? time() : entity.attributes.button.since
+        - attribute: "scene_activation.since" # just copy button.since
+          expr: "entity?.attributes?.button?.since"
+        - attribute: "button.state"
+          json_payload: true
+          expr: >
+            payload?.event == "S" ? "single" :
+            payload?.event == "SS" ? "double" :
+            payload?.event == "SSS" ? "triple" :
+            payload?.event == "L" ? "long" :
+            "unknown"
+        - attribute: "scene_activation.scene_id"
+          json_payload: true
+          expr: "payload?.event"
+        - attribute: "x_mqtt_device.online"
+          expr: true
 
   # Shelly HEM
   shelly_hem:
@@ -318,13 +328,13 @@ templates:
 
       "shellies/%topic%/emeter/%channel%/total":
         "energy_sensor.value":
-          expr: "round(float(payload) / 1000, 4)" # Wh to Kwh
+          expr: "round(float(payload) / 1000, 4)" # Wh - value  / 1000
         "energy_sensor.units": "KWH"
         "x_mqtt_device.online": true
 
       "shellies/%topic%/emeter/%channel%/total_returned":
         "x_energy_sensor_exported.value":
-          expr: "round(float(payload) / 1000, 4)" # Wh to Kwh
+          expr: "round(float(payload) / 1000, 4)" # Wh - value  / 1000
         "x_energy_sensor_exported.units": "KWH"
         "x_mqtt_device.online": true
 
