@@ -270,9 +270,6 @@ templates:
       - shelly_online_gen1
     events:
       "shellies/%topic%/input_event/%channel%":
-        - attribute: "value_sensor.value"
-          json_payload: true
-          expr: "float(payload?.event_cnt)"
         - attribute: "button.since"
           json_payload: true
           expr: >
@@ -282,6 +279,9 @@ templates:
             ) ? time() : entity.attributes.button.since
         - attribute: "scene_activation.since" # just copy button.since
           expr: "entity?.attributes?.button?.since"
+        - attribute: "value_sensor.value"
+          json_payload: true
+          expr: "float(payload?.event_cnt)"
         - attribute: "button.state"
           json_payload: true
           expr: >

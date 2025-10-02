@@ -195,6 +195,7 @@ If you have MQTT payloads for Shelly Gen3 and want them covered, use the procedu
 
 # Changelog
 
+ - *25274*: Fixes for *shelly_scenecontroller*.
  - *25272*: Fixes for *shelly_scenecontroller* to better handle multiple pushes of the same button.
  - *26265*: Measurement fix (Wh to KwH) for *shelly_3em_gen3* and *shelly_hem_gen3*.
  - *26228*: New template for *shelly_3em_gen3*. Fixes for *shelly_hem_gen3*.
